@@ -1,0 +1,146 @@
+/* Shared Card Transition Layer */
+.shared-card-container {
+  position: absolute;
+  z-index: 120;
+  pointer-events: none;
+  border-radius: 24px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background-color: #f8fafc;
+  will-change: top, left, width, height, transform, box-shadow, border-radius;
+}
+
+/* Stage: Lift (200ms) */
+.shared-card-container.stage-lift {
+  transform: scale(1.02);
+  border: 2px solid #f59e0b;
+  border-radius: 24px;
+  box-shadow:
+    0 24px 50px -8px rgba(0, 0, 0, 0.28),
+    0 10px 24px rgba(245, 158, 11, 0.24);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+/* Stage: Travel (800ms) - Scales down into compact Home card */
+.shared-card-container.stage-travel {
+  transform: scale(1.015);
+  border: 2px solid rgba(245, 158, 11, 0.35);
+  border-radius: 18px;
+  box-shadow:
+    0 14px 28px -4px rgba(0, 0, 0, 0.16),
+    0 6px 14px rgba(0, 0, 0, 0.08);
+  transition:
+    top 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    left 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.8s ease,
+    border-color 0.8s ease;
+}
+
+/* Stage: Settle (150ms) */
+.shared-card-container.stage-settle {
+  transform: scale(1);
+  border: 2px solid transparent;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+/* Inner card content & curved trajectory */
+.shared-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: inherit;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.shared-card-inner.stage-travel {
+  animation: cardCurvedPath 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes cardCurvedPath {
+  0% {
+    transform: translateX(0);
+  }
+  38% {
+    transform: translateX(-10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Card Artwork Image */
+.shared-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+/* Top Right Step Badge */
+.shared-card-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #ffffff;
+  color: #f59e0b;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  z-index: 10;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.shared-card-badge.fade-out {
+  opacity: 0;
+  transform: scale(0.9) translateY(-4px);
+}
+
+/* Bottom Title Overlay for Destination match */
+.shared-card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 12px 14px 12px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(10, 20, 25, 0.65) 36%,
+    rgba(10, 20, 25, 0.94) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.shared-card-overlay.visible {
+  opacity: 1;
+}
+
+.shared-card-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,230 @@
+.onboarding-screen {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Top bar with Skip button */
+.onboarding-top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 8px 20px 0 20px;
+  flex-shrink: 0;
+  z-index: 10;
+  animation: onboardingFadeDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.onboarding-skip-btn {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 6px 20px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.onboarding-skip-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.onboarding-skip-btn:active {
+  transform: scale(0.96);
+}
+
+/* Header section with title and subtitle */
+.onboarding-header {
+  padding: 20px 24px 0 24px;
+  text-align: center;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.onboarding-title {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.28;
+  color: #1e2530;
+  letter-spacing: -0.4px;
+  margin: 0 auto;
+  max-width: 320px;
+  animation: onboardingFadeDown 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.onboarding-subtitle {
+  font-size: 15.5px;
+  font-weight: 500;
+  color: #374151;
+  margin-top: 12px;
+  letter-spacing: -0.1px;
+  animation: onboardingFadeDown 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+/* Artwork section with soil ground */
+.onboarding-artwork-container {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-color: #653814;
+  overflow: hidden;
+  margin-top: 8px;
+  animation: onboardingFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.onboarding-artwork-img {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Bottom Floating CTA Container */
+.onboarding-cta-container {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+  z-index: 20;
+  animation: onboardingFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.onboarding-cta-btn {
+  width: 100%;
+  max-width: 350px;
+  height: 56px;
+  background: linear-gradient(180deg, #ffba1e 0%, #f59e0b 100%);
+  border: none;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 6px 26px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 17.5px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  box-shadow:
+    0 10px 25px -4px rgba(245, 158, 11, 0.48),
+    0 4px 10px -2px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.onboarding-cta-btn:hover {
+  filter: brightness(1.03);
+  box-shadow:
+    0 12px 28px -4px rgba(245, 158, 11, 0.58),
+    0 6px 12px -2px rgba(0, 0, 0, 0.2);
+}
+
+.onboarding-cta-btn:active {
+  transform: scale(0.97);
+  filter: brightness(0.96);
+}
+
+.onboarding-cta-text {
+  font-weight: 700;
+}
+
+.onboarding-cta-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.14);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.onboarding-cta-btn:hover .onboarding-cta-circle {
+  transform: translateX(2px);
+}
+
+/* Interactive Toast */
+.onboarding-toast {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  animation: toastSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes onboardingFadeDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes onboardingFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes onboardingFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toastSlideDown {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
