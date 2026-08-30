@@ -1,0 +1,137 @@
+/* Row Cards Transition Layer (Flow 3) */
+.row-transition-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 125;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Dark Background Veil that starts dark and fades out smoothly (Image 3) */
+.row-transition-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(30, 35, 42, 0.92);
+  opacity: 1;
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 126;
+}
+
+.row-transition-backdrop.fade-out {
+  opacity: 0;
+}
+
+/* Horizontal Cards Row gliding UPWARDS */
+.row-transition-carousel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 220px;
+  z-index: 130;
+  will-change: top;
+  transition: top 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.row-transition-inner {
+  display: flex;
+  gap: 14px;
+  padding: 0 20px;
+  width: max-content;
+  overflow: visible;
+}
+
+/* Cards matching Home dimensions with golden highlight border (Image 3) */
+.row-transition-card {
+  width: 165px;
+  height: 212px;
+  border-radius: 18px;
+  border: 2.5px solid #f59e0b;
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
+  background: #ffffff;
+  box-shadow:
+    0 0 20px rgba(245, 158, 11, 0.45),
+    0 10px 28px rgba(0, 0, 0, 0.22);
+  flex-shrink: 0;
+  transition: box-shadow 0.25s ease;
+}
+
+.row-transition-layer.is-settled .row-transition-card {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Stylized Step Numbers overlapping top-right */
+.row-transition-step-num {
+  position: absolute;
+  top: -20px;
+  right: 6px;
+  font-size: 50px;
+  font-weight: 800;
+  color: #00796b;
+  z-index: 15;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  font-family: inherit;
+  user-select: none;
+}
+
+.row-transition-step-num.fade-out {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+/* Artwork Image */
+.row-transition-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  border-radius: 15.5px;
+}
+
+/* Card Bottom Overlay */
+.row-transition-card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 22px 12px 12px 12px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(10, 20, 25, 0.65) 36%,
+    rgba(10, 20, 25, 0.94) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 0 0 15.5px 15.5px;
+  pointer-events: none;
+}
+
+.row-transition-card-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.row-transition-card-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 3px 0 0 0;
+  line-height: 1.2;
+  transition: opacity 0.25s ease;
+}
+
+.row-transition-card-desc.fade-out {
+  opacity: 0;
+}

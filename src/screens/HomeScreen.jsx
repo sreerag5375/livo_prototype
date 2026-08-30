@@ -33,11 +33,14 @@ export default function HomeScreen({
   onViewAllPlan,
   isTransitioningFromPlan = false,
   hideCard1 = false,
+  hideAllCards = false,
   firstCardRef = null,
+  _activeFlow = 1,
 }) {
   const [activeTab, setActiveTab] = useState('home');
   const [toastMessage, setToastMessage] = useState(null);
   const carouselRef = useRef(null);
+  const cards = PICK_FOR_YOU_CARDS;
 
   useEffect(() => {
     if (carouselRef.current) {
@@ -223,7 +226,7 @@ export default function HomeScreen({
 
             {/* Carousel Cards */}
             <div className="home-cards-carousel" ref={carouselRef}>
-              {PICK_FOR_YOU_CARDS.map((card, idx) => (
+              {cards.map((card, idx) => (
                 <div
                   key={card.id}
                   ref={idx === 0 ? firstCardRef : null}
@@ -231,7 +234,11 @@ export default function HomeScreen({
                   className={`home-pick-card ${
                     isTransitioningFromPlan && idx > 0 ? 'fade-in-delayed' : ''
                   }`}
-                  style={idx === 0 && hideCard1 ? { visibility: 'hidden' } : undefined}
+                  style={
+                    hideAllCards || (idx === 0 && hideCard1)
+                      ? { visibility: 'hidden' }
+                      : undefined
+                  }
                   onClick={handleViewAll}
                 >
                   <img

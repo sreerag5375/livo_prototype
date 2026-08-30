@@ -10,6 +10,7 @@ export default function MobileFrame({
   screenBg = '#FFFFFF',
   bottomBg,
   overlayStatusBar = false,
+  overlayHomeIndicator = false,
 }) {
   const isStatusBarLight = statusBarLight ?? lightContent;
   const isHomeIndicatorLight = homeIndicatorLight ?? lightContent;
@@ -19,7 +20,7 @@ export default function MobileFrame({
     <div
       className={`device-wrapper ${isLight ? 'light-theme' : ''} ${
         overlayStatusBar ? 'overlay-status-bar' : ''
-      }`}
+      } ${overlayHomeIndicator ? 'overlay-home-indicator' : ''}`}
       style={{ backgroundColor: screenBg }}
     >
       {showIsland && (

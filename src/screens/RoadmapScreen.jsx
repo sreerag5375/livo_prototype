@@ -52,6 +52,7 @@ export default function RoadmapScreen({
   skipGeneration = false,
   hideCard1 = false,
   isExitingToHome = false,
+  activeFlow = 1,
 }) {
   // Reveal state for each of the 4 cards: all true if skipGeneration is true
   const [revealedSteps, setRevealedSteps] = useState(
@@ -62,9 +63,14 @@ export default function RoadmapScreen({
   const [activeIndex, setActiveIndex] = useState(0);
   const [toastMessage, setToastMessage] = useState(null);
   const [isPlanComplete, setIsPlanComplete] = useState(false);
+  const [isDarkVeil, setIsDarkVeil] = useState(false);
+
+  // In both flows, Card 1 is the primary focus card for Home transition
+  const targetCardIndex = 0;
 
   const carouselRef = useRef(null);
   const firstCardRef = useRef(null);
+  const cardRefs = useRef([]);
   const timersRef = useRef([]);
 
   const clearAllTimers = () => {
@@ -88,18 +94,35 @@ export default function RoadmapScreen({
     setActiveIndex(idx);
   };
 
-  // When all 4 cards are revealed and scroll returns to Step 1:
-  // Hold for ~500ms with Step 1 in primary focus, then trigger transition to Home
-  const triggerPlanCompletionHold = () => {
+  // When all 4 cards are revealed:
+  // In Flow 3: dims into dark veil, then triggers entire row upward glide
+  // In Flow 1: auto-transitions smoothly to Home
+  // In Flow 2: stays on screen with CTAs; transitions to Home only when user taps 'Later, Go to Home'
+  const triggerPlanCompletionHold = (targetIdx = 0) => {
     if (skipGeneration) return;
     const tSettle = setTimeout(() => {
       setIsPlanComplete(true);
-      const tHold = setTimeout(() => {
-        if (onPlanReadyForHome) {
-          onPlanReadyForHome(firstCardRef.current);
-        }
-      }, 500);
-      timersRef.current.push(tHold);
+      setActiveIndex(targetIdx);
+      if (activeFlow === 3) {
+        // Flow 3: Dim background and header into dark veil (Image 2)
+        setIsDarkVeil(true);
+        // After 450ms hold in dark veil, trigger the entire row transition to Home
+        const tHold = setTimeout(() => {
+          if (onPlanReadyForHome) {
+            onPlanReadyForHome(carouselRef.current, ROADMAP_STEPS, 0);
+          }
+        }, 450);
+        timersRef.current.push(tHold);
+      } else if (activeFlow === 1) {
+        // Flow 1 auto-transitions smoothly to Home
+        const tHold = setTimeout(() => {
+          if (onPlanReadyForHome) {
+            const targetEl = cardRefs.current[targetIdx] || firstCardRef.current;
+            onPlanReadyForHome(targetEl, ROADMAP_STEPS[targetIdx], targetIdx);
+          }
+        }, 550);
+        timersRef.current.push(tHold);
+      }
     }, 400);
     timersRef.current.push(tSettle);
   };
@@ -111,15 +134,46 @@ export default function RoadmapScreen({
     setGeneratingIndex(-1);
     setIsGenerating(false);
     scrollToStep(0);
-    triggerPlanCompletionHold();
+    triggerPlanCompletionHold(0);
   };
 
   useEffect(() => {
     if (skipGeneration) return;
-
-    // Start sequential step-by-step reveal: Step 1 -> Step 2 -> Step 3 -> Step 4
     clearAllTimers();
 
+    if (activeFlow === 3) {
+      // Flow 3: Simple sequential black shadow fade reveal
+      // Step 1: 350ms
+      const t1 = setTimeout(() => {
+        setRevealedSteps([true, false, false, false]);
+        setGeneratingIndex(1);
+      }, 350);
+
+      // Step 2: 850ms
+      const t2 = setTimeout(() => {
+        setRevealedSteps([true, true, false, false]);
+        setGeneratingIndex(2);
+      }, 850);
+
+      // Step 3: 1350ms
+      const t3 = setTimeout(() => {
+        setRevealedSteps([true, true, true, false]);
+        setGeneratingIndex(3);
+      }, 1350);
+
+      // Step 4: 1850ms -> finalize
+      const t4 = setTimeout(() => {
+        setRevealedSteps([true, true, true, true]);
+        setGeneratingIndex(-1);
+        setIsGenerating(false);
+        triggerPlanCompletionHold(0);
+      }, 1850);
+
+      timersRef.current = [t1, t2, t3, t4];
+      return () => clearAllTimers();
+    }
+
+    // Flows 1 & 2: sequential reveal with scroll
     // Step 1: Initial prepare (1.1s) -> reveal -> hold (800ms) -> scroll to Step 2
     const t1 = setTimeout(() => {
       setRevealedSteps([true, false, false, false]);
@@ -150,23 +204,23 @@ export default function RoadmapScreen({
       setGeneratingIndex(3);
     }, 5000);
 
-    // Step 4: prepare (400ms after scroll) -> reveal -> hold (800ms) -> return to Step 1
+    // Step 4: prepare (400ms after scroll) -> reveal -> finalize
     const t7 = setTimeout(() => {
       setRevealedSteps([true, true, true, true]);
     }, 5600);
 
+    // Return to Step 1 and finalize
     const t8 = setTimeout(() => {
-      // Return focus to Step 1 for the completed plan state
       scrollToStep(0);
       setGeneratingIndex(-1);
       setIsGenerating(false);
-      triggerPlanCompletionHold();
+      triggerPlanCompletionHold(0);
     }, 6500);
 
     timersRef.current = [t1, t2, t3, t4, t5, t6, t7, t8];
 
     return () => clearAllTimers();
-  }, []);
+  }, [activeFlow]);
 
   const handleScroll = () => {
     if (!carouselRef.current || isGenerating) return;
@@ -179,38 +233,23 @@ export default function RoadmapScreen({
     }
   };
 
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 2200);
-  };
-
   const handleCtaClick = () => {
-    if (isGenerating) {
-      // If clicked while generating, quickly complete the animation
-      fastForwardToComplete();
-      return;
-    }
-    const currentStep = ROADMAP_STEPS[activeIndex];
-    if (onStartScan) {
-      onStartScan(currentStep);
-    } else {
-      showToast(`Starting ${currentStep.title}...`);
-    }
+    setToastMessage(`Selected: ${ROADMAP_STEPS[activeIndex]?.title}`);
+    setTimeout(() => setToastMessage(null), 2500);
   };
 
   const handleHomeClick = (e) => {
     e.preventDefault();
-    if (onGoHome) {
-      onGoHome();
-    } else {
-      showToast('Navigating to Home Dashboard...');
-    }
+    if (onGoHome) onGoHome();
   };
 
   return (
-    <div className={`roadmap-screen ${isExitingToHome ? 'is-exiting-to-home' : ''}`}>
-      {/* Top Bar with Back Button */}
+    <div
+      className={`roadmap-screen ${isExitingToHome ? 'is-exiting-to-home' : ''} ${
+        isDarkVeil ? 'is-dark-veil' : ''
+      }`}
+    >
+      {/* Top Bar with Back Arrow */}
       <header className="roadmap-top-bar">
         <button
           type="button"
@@ -239,23 +278,17 @@ export default function RoadmapScreen({
           Your path to healthier<br />crops is ready.
         </h1>
         <p className="roadmap-subtitle">
-          {isGenerating ? (
-            <span className="roadmap-subtitle-preparing">
-              LIVO is preparing your personalized plan…
-            </span>
-          ) : (
-            <>
-              {"Let's take the "}
-              <span className="roadmap-highlight-step">first step</span>
-              {" together."}
-            </>
-          )}
+          {"Let's take the "}
+          <span className="roadmap-highlight-step">first step</span>
+          {" together."}
         </p>
       </section>
 
       {/* Horizontal Carousel */}
       <div
-        className={`roadmap-carousel ${isGenerating ? 'is-generating-mode' : ''}`}
+        className={`roadmap-carousel ${isGenerating ? 'is-generating-mode' : ''} ${
+          activeFlow === 3 ? 'is-small-layout' : ''
+        }`}
         ref={carouselRef}
         onScroll={handleScroll}
       >
@@ -267,15 +300,26 @@ export default function RoadmapScreen({
           return (
             <div
               key={step.id}
-              ref={idx === 0 ? firstCardRef : null}
+              ref={(el) => {
+                cardRefs.current[idx] = el;
+                if (idx === 0) firstCardRef.current = el;
+              }}
               id={`roadmap-card-${idx}`}
-              style={idx === 0 && hideCard1 ? { visibility: 'hidden' } : undefined}
+              style={
+                hideCard1 && activeFlow !== 3 ? { visibility: 'hidden' } : undefined
+              }
               className={`roadmap-card ${isActive ? 'active' : ''} ${
                 isRevealed ? 'is-revealed' : 'is-unrevealed'
               } ${isCurrentlyGenerating ? 'is-generating' : ''} ${
-                isPlanComplete && idx === 0 ? 'is-primary-focus' : ''
+                activeFlow === 3 ? 'is-flow3-card' : ''
               } ${
-                isPlanComplete && idx > 0 ? 'is-dimmed' : ''
+                isPlanComplete && idx === targetCardIndex && activeFlow !== 3
+                  ? 'is-primary-focus'
+                  : ''
+              } ${
+                isPlanComplete && idx !== targetCardIndex && activeFlow !== 3
+                  ? 'is-dimmed'
+                  : ''
               }`}
               onClick={() => {
                 if (isGenerating) {
@@ -285,14 +329,40 @@ export default function RoadmapScreen({
                 }
               }}
             >
-              {isRevealed ? (
-                /* Fully Revealed Completed Card */
-                <div className="roadmap-card-revealed-content">
-                  {/* Step Badge */}
-                  <div className="roadmap-card-badge">
-                    {step.stepBadge}
-                  </div>
+              {activeFlow === 3 ? (
+                /* Flow 3: Small Card with Big Stylized Step Number & Simple Black Shadow Fade */
+                <div className="roadmap-card-flow3-wrapper">
+                  {/* Big Step Number at top-right (Image 1 & 2) */}
+                  <span className="roadmap-flow3-step-num">{step.id}</span>
 
+                  <div className="roadmap-card-flow3-content">
+                    {/* Artwork Image */}
+                    <img
+                      src={step.image}
+                      alt={step.title}
+                      className="roadmap-card-img"
+                      draggable="false"
+                    />
+
+                    {/* Simple Black Shadow Overlay (fades out smoothly on reveal) */}
+                    <div
+                      className={`roadmap-flow3-black-shade ${
+                        isRevealed ? 'is-unlocked' : 'is-locked'
+                      }`}
+                    />
+
+                    {/* Card Title & Desc Overlay at the bottom */}
+                    <div className="roadmap-card-text-overlay">
+                      <h3 className="roadmap-card-title">{step.title}</h3>
+                      {idx === 0 && (
+                        <p className="roadmap-card-desc">{step.description}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Flow 1 & 2 Card: Artwork with Black Shade and Unlocking Golden Lock */
+                <div className="roadmap-card-flow2-content">
                   {/* Artwork Image */}
                   <img
                     src={step.image}
@@ -301,54 +371,50 @@ export default function RoadmapScreen({
                     draggable="false"
                   />
 
-                  {/* Overlay text for cards without embedded text */}
+                  {/* Black Shade Overlay with Golden Lock */}
+                  <div className={`roadmap-card-flow2-shade ${isRevealed ? 'is-unlocked' : 'is-locked'}`}>
+                    {!isRevealed && (
+                      <div className="roadmap-flow2-unlock-center">
+                        <div className={`roadmap-flow2-lock-wrap ${isCurrentlyGenerating ? 'is-unlocking' : ''}`}>
+                          <span className="roadmap-sparkle sparkle-top">✦</span>
+                          <span className="roadmap-sparkle sparkle-right">✦</span>
+                          <span className="roadmap-sparkle sparkle-left">✦</span>
+
+                          <svg width="44" height="52" viewBox="0 0 44 52" fill="none" className="roadmap-padlock-svg">
+                            {/* Open Shackle */}
+                            <path
+                              d="M13 22V13C13 8.02944 17.0294 4 22 4C26.9706 4 31 8.02944 31 13V15"
+                              stroke="#FDE68A"
+                              strokeWidth="4.5"
+                              strokeLinecap="round"
+                            />
+                            {/* Golden Padlock Body */}
+                            <rect x="5" y="20" width="34" height="28" rx="7" fill="url(#padlockGold)" />
+                            {/* Keyhole */}
+                            <circle cx="22" cy="32" r="3" fill="#78350F" />
+                            <path d="M22 34V39" stroke="#78350F" strokeWidth="2.5" strokeLinecap="round" />
+                            <defs>
+                              <linearGradient id="padlockGold" x1="5" y1="20" x2="39" y2="48" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#FBBF24" />
+                                <stop offset="1" stopColor="#D97706" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                        </div>
+                        <span className="roadmap-flow2-unlock-label">
+                          {isCurrentlyGenerating ? 'Unlocking' : 'Locked'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card Title & Desc Overlay at the bottom */}
                   {!step.hasEmbeddedText && (
                     <div className="roadmap-card-text-overlay">
                       <h3 className="roadmap-card-title">{step.title}</h3>
                       <p className="roadmap-card-desc">{step.description}</p>
                     </div>
                   )}
-                </div>
-              ) : (
-                /* Preparing / Locked Queue Card */
-                <div className="roadmap-card-preparing-state">
-                  <div className="roadmap-card-badge badge-pending">
-                    {step.stepBadge}
-                  </div>
-
-                  <div className="roadmap-card-preparing-inner">
-                    {/* Animated glowing Livo Leaf Icon */}
-                    <div className={`roadmap-preparing-icon-wrap ${isCurrentlyGenerating ? 'pulsing' : ''}`}>
-                      <svg
-                        width="30"
-                        height="30"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M21 3C21 3 17 4 12 9C7 14 6 18 6 18L7 20C7 20 10 19 14 15C19 10 21 3 21 3Z"
-                          fill={isCurrentlyGenerating ? '#00796B' : '#94A3B8'}
-                        />
-                        <path
-                          d="M6 18L3 21"
-                          stroke={isCurrentlyGenerating ? '#00796B' : '#94A3B8'}
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </div>
-
-                    <p className="roadmap-preparing-status">
-                      {isCurrentlyGenerating
-                        ? `Personalizing ${step.shortLabel}…`
-                        : `Step ${step.id}`}
-                    </p>
-
-                    <div className="roadmap-preparing-progress-bar">
-                      <div className={`roadmap-preparing-progress-fill ${isCurrentlyGenerating ? 'active' : ''}`} />
-                    </div>
-                  </div>
                 </div>
               )}
             </div>
@@ -380,6 +446,35 @@ export default function RoadmapScreen({
           );
         })}
       </div>
+
+      {/* Flow 2 Bottom Action Area (Shown once plan is complete and not viewing from Home) */}
+      {activeFlow === 2 && isPlanComplete && !skipGeneration && (
+        <footer className="roadmap-flow2-footer">
+          <button
+            type="button"
+            className="roadmap-flow2-primary-btn"
+            onClick={() => {
+              setToastMessage('Starting Health Scan...');
+              setTimeout(() => setToastMessage(null), 2000);
+              if (onStartScan) onStartScan();
+            }}
+          >
+            Start Health Scan →
+          </button>
+
+          <button
+            type="button"
+            className="roadmap-flow2-close-link"
+            onClick={() => {
+              if (onPlanReadyForHome) {
+                onPlanReadyForHome(firstCardRef.current, ROADMAP_STEPS[0], 0);
+              }
+            }}
+          >
+            Later, Go to Home
+          </button>
+        </footer>
+      )}
 
       {/* Bottom Action Area - Only shown when viewing plan from Home */}
       {skipGeneration && (

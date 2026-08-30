@@ -6,37 +6,43 @@ export default function SharedCardTransition({
   endRect,
   cardData,
   onComplete,
+  isGameVariant = false,
 }) {
-  // Stages: 'lift' (200ms) -> 'travel' (800ms) -> 'settle' (150ms)
+  // Stages: 'lift' -> 'travel' -> 'settle'
   const [stage, setStage] = useState('lift');
 
+  const liftDuration = isGameVariant ? 260 : 200;
+  const travelDuration = isGameVariant ? 840 : 800;
+  const settleDuration = isGameVariant ? 220 : 150;
+
   useEffect(() => {
-    // 1. Lift stage runs for 200ms
+    // 1. Lift stage
     const tLift = setTimeout(() => {
       setStage('travel');
-    }, 200);
+    }, liftDuration);
 
-    // 2. Travel stage runs for 800ms (200 + 800 = 1000ms)
+    // 2. Travel stage
     const tTravel = setTimeout(() => {
       setStage('settle');
-    }, 1000);
+    }, liftDuration + travelDuration);
 
-    // 3. Settle stage runs for 150ms (1000 + 150 = 1150ms)
+    // 3. Settle stage
     const tSettle = setTimeout(() => {
       if (onComplete) {
         onComplete();
       }
-    }, 1150);
+    }, liftDuration + travelDuration + settleDuration);
 
     return () => {
       clearTimeout(tLift);
       clearTimeout(tTravel);
       clearTimeout(tSettle);
     };
-  }, [onComplete]);
+  }, [onComplete, liftDuration, travelDuration, settleDuration]);
 
   // Compute current geometry based on stage
   const isLift = stage === 'lift';
+  const isTravel = stage === 'travel';
   const isSettle = stage === 'settle';
 
   const currentRect = isLift ? startRect : endRect;
@@ -50,13 +56,43 @@ export default function SharedCardTransition({
 
   return (
     <div
-      className={`shared-card-container stage-${stage}`}
+      className={`shared-card-container stage-${stage} ${
+        isGameVariant ? 'is-game-variant' : ''
+      }`}
       style={style}
     >
-      <div className={`shared-card-inner stage-${stage}`}>
-        {/* Step Badge - visible during lift, fades out during travel */}
-        <div className={`shared-card-badge ${!isLift ? 'fade-out' : ''}`}>
-          {cardData?.stepBadge || 'STEP 1 OF 4'}
+      {/* Game Variant Special Effects */}
+      {isGameVariant && isLift && (
+        <>
+          <div className="game-energy-ring ring-1" />
+          <div className="game-energy-ring ring-2" />
+        </>
+      )}
+
+      {isGameVariant && isTravel && (
+        <>
+          <div className="game-holo-sweep" />
+          <div className="game-sparkle-trail">
+            <span className="sparkle s1">✦</span>
+            <span className="sparkle s2">★</span>
+            <span className="sparkle s3">✦</span>
+          </div>
+        </>
+      )}
+
+      {isGameVariant && isSettle && (
+        <>
+          <div className="game-impact-shockwave" />
+          <div className="game-impact-flash" />
+        </>
+      )}
+
+      <div className={`shared-card-inner stage-${stage} ${isGameVariant ? 'is-game-inner' : ''}`}>
+        {/* Step / Quest Badge */}
+        <div className={`shared-card-badge ${!isLift ? 'fade-out' : ''} ${isGameVariant ? 'game-badge' : ''}`}>
+          {isGameVariant
+            ? '★ QUEST 1 READY ★'
+            : cardData?.stepBadge || 'STEP 1 OF 4'}
         </div>
 
         {/* Artwork Image */}

@@ -525,3 +525,562 @@
   transition: opacity 0.45s ease;
 }
 
+.roadmap-screen.is-exiting-to-home .roadmap-flow2-footer {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* ==========================================================================
+   FLOW 2: Black Shade Unlocking Animation & Action Footer
+   ========================================================================== */
+
+.roadmap-card-flow2-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+/* Black shade overlay over the artwork */
+.roadmap-card-flow2-shade {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
+  z-index: 4;
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.55s ease;
+}
+
+.roadmap-card-flow2-shade.is-unlocked {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.roadmap-card-flow2-shade.is-locked {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Center Golden Lock & Unlocking Label */
+.roadmap-flow2-unlock-center {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 5;
+}
+
+.roadmap-flow2-lock-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 4px 16px rgba(245, 158, 11, 0.45));
+}
+
+.roadmap-flow2-lock-wrap.is-unlocking {
+  animation: lockFloatPulse 1.4s infinite ease-in-out;
+}
+
+.roadmap-padlock-svg {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* Sparkles */
+.roadmap-sparkle {
+  position: absolute;
+  color: #fbbf24;
+  font-size: 16px;
+  pointer-events: none;
+  animation: sparkleTwinkle 1.2s infinite ease-in-out alternate;
+}
+
+.sparkle-top {
+  top: -6px;
+  right: -4px;
+  animation-delay: 0.2s;
+}
+
+.sparkle-right {
+  top: 14px;
+  right: -14px;
+  font-size: 11px;
+  animation-delay: 0.5s;
+}
+
+.sparkle-left {
+  top: 16px;
+  left: -14px;
+  font-size: 12px;
+  animation-delay: 0.7s;
+}
+
+@keyframes lockFloatPulse {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.05);
+  }
+}
+
+@keyframes sparkleTwinkle {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.75) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2) rotate(15deg);
+  }
+}
+
+.roadmap-flow2-unlock-label {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Flow 2 Bottom Action Area */
+.roadmap-flow2-footer {
+  padding: 8px 24px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  animation: flow2FooterSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.roadmap-flow2-primary-btn {
+  width: 100%;
+  height: 56px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffb300 0%, #f59e0b 100%);
+  color: #ffffff;
+  font-size: 16.5px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(245, 158, 11, 0.38);
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roadmap-flow2-primary-btn:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 12px 28px rgba(245, 158, 11, 0.45);
+  transform: translateY(-1px);
+}
+
+.roadmap-flow2-primary-btn:active {
+  transform: scale(0.98);
+}
+
+.roadmap-flow2-close-link {
+  background: transparent;
+  border: none;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 4px 10px;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.roadmap-flow2-close-link:hover {
+  color: #0f172a;
+}
+
+.roadmap-flow2-close-link:active {
+  opacity: 0.7;
+}
+
+@keyframes flow2FooterSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   FLOW 3: Game Quest Reveal & Charging Launch Animations
+   ========================================================================== */
+
+.roadmap-card-game-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+/* Cyber quest dark shade overlay */
+.roadmap-card-game-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(6, 78, 59, 0.86) 0%, rgba(15, 23, 42, 0.92) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 4;
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.55s ease;
+}
+
+.roadmap-card-game-shade.is-unlocked {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.roadmap-card-game-shade.is-locked {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Center Game Crest & Power-up */
+.roadmap-game-unlock-center {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 5;
+}
+
+.roadmap-game-crest-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roadmap-game-crest-wrap.is-powering {
+  animation: questCrestPulse 1.2s infinite ease-in-out;
+}
+
+.roadmap-game-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.roadmap-game-ring.ring-1 {
+  inset: 0;
+  border: 2px dashed #10b981;
+  animation: rotateRing 8s linear infinite;
+}
+
+.roadmap-game-ring.ring-2 {
+  inset: 8px;
+  border: 1.5px solid rgba(245, 158, 11, 0.8);
+  animation: rotateRingRev 6s linear infinite;
+}
+
+@keyframes rotateRing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateRingRev {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes questCrestPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.5));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 22px rgba(16, 185, 129, 0.85));
+  }
+}
+
+.roadmap-game-shield {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.7);
+}
+
+.roadmap-game-crest-icon {
+  font-size: 22px;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+.roadmap-game-badge-tag {
+  font-size: 12px;
+  font-weight: 800;
+  color: #a7f3d0;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: rgba(6, 78, 59, 0.65);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.roadmap-game-unlock-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: -0.1px;
+}
+
+/* Floating Quest Pill on revealed cards */
+.roadmap-game-quest-pill {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+  z-index: 6;
+  border: 1px solid #a7f3d0;
+  animation: questBadgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes questBadgePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Holographic sheen sweeping across the card */
+.roadmap-game-holo-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  pointer-events: none;
+  z-index: 5;
+  animation: questHoloSweep 0.85s ease-out forwards;
+}
+
+@keyframes questHoloSweep {
+  0% {
+    transform: translateX(-100%) rotate(25deg);
+  }
+  100% {
+    transform: translateX(150%) rotate(25deg);
+  }
+}
+
+/* Power Charge Launch State on Step 1 before flight */
+.roadmap-card.is-game-charging {
+  border-color: #10b981 !important;
+  box-shadow:
+    0 0 40px rgba(16, 185, 129, 0.7),
+    0 0 20px rgba(245, 158, 11, 0.6),
+    0 24px 50px rgba(0, 0, 0, 0.3) !important;
+  animation: gameCardPowerCharge 0.75s infinite alternate ease-in-out;
+}
+
+@keyframes gameCardPowerCharge {
+  0% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+/* ==========================================================================
+   FLOW 3: Small Cards Layout & Dark Veil (Matching User Reference)
+   ========================================================================== */
+
+/* Dark Veil Backdrop State (Image 2) */
+.roadmap-screen.is-dark-veil {
+  background: rgba(30, 35, 42, 0.94);
+  transition: background 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.roadmap-screen.is-dark-veil .roadmap-header,
+.roadmap-screen.is-dark-veil .roadmap-top-bar,
+.roadmap-screen.is-dark-veil .roadmap-dots-indicator {
+  opacity: 0.22;
+  transition: opacity 0.45s ease;
+}
+
+/* Small Cards Carousel (Image 1) - Positioned in lower half */
+.roadmap-carousel.is-small-layout {
+  padding: 28px 20px 24px 20px;
+  gap: 14px;
+  margin-top: 64px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.roadmap-carousel.is-small-layout .roadmap-card,
+.roadmap-card.is-flow3-card {
+  flex: 0 0 165px !important;
+  width: 165px !important;
+  height: 212px !important;
+  border-radius: 18px !important;
+  border: 2.5px solid #f59e0b !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  flex-shrink: 0 !important;
+  box-shadow:
+    0 10px 28px rgba(245, 158, 11, 0.28),
+    0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  background: #ffffff !important;
+  position: relative !important;
+  cursor: pointer;
+  scroll-snap-align: start;
+}
+
+.roadmap-carousel.is-small-layout .roadmap-card.is-unrevealed {
+  border: 2.5px solid #f59e0b !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+}
+
+.roadmap-card-flow3-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+.roadmap-card-flow3-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 15.5px;
+  overflow: hidden;
+}
+
+.roadmap-card.is-flow3-card .roadmap-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+/* Stylized Step Numbers (1, 2, 3, 4) in dark teal overlapping top right */
+.roadmap-flow3-step-num {
+  position: absolute;
+  top: -20px;
+  right: 6px;
+  font-size: 50px;
+  font-weight: 800;
+  color: #00796b;
+  z-index: 15;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  font-family: inherit;
+  user-select: none;
+}
+
+/* Simple Black Shadow Overlay (fades out smoothly on reveal) */
+.roadmap-flow3-black-shade {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.68);
+  z-index: 4;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+
+.roadmap-flow3-black-shade.is-unlocked {
+  opacity: 0;
+}
+
+.roadmap-flow3-black-shade.is-locked {
+  opacity: 1;
+}
+
+.roadmap-card.is-flow3-card .roadmap-card-text-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 22px 12px 12px 12px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(10, 20, 25, 0.65) 36%,
+    rgba(10, 20, 25, 0.94) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.roadmap-card.is-flow3-card .roadmap-card-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.roadmap-card.is-flow3-card .roadmap-card-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 3px 0 0 0;
+  line-height: 1.2;
+}
+
+
+
+

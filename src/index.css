@@ -169,6 +169,16 @@ html, body {
     background-color: rgba(255, 255, 255, 0.4);
     border-radius: 100px;
   }
+
+  .device-wrapper.overlay-home-indicator .home-indicator-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 45;
+    background: transparent !important;
+  }
+
   /* Light theme frame adaptations */
   .device-wrapper.light-theme {
     background: #ffffff;
