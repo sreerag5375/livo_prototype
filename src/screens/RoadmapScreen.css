@@ -62,7 +62,7 @@
 
 .roadmap-title {
   font-size: 23px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.25;
   color: #1e2530;
   letter-spacing: -0.4px;
@@ -176,7 +176,7 @@
   background: #ffffff;
   color: #f59e0b;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.6px;
   padding: 6px 14px;
   border-radius: 999px;
@@ -211,7 +211,7 @@
 
 .roadmap-card-title {
   font-size: 19.5px;
-  font-weight: 800;
+  font-weight: 700;
   color: #ffffff;
   margin: 0 0 6px 0;
   line-height: 1.2;
@@ -645,7 +645,7 @@
 
 .roadmap-flow2-unlock-label {
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.2px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
@@ -669,7 +669,7 @@
   background: linear-gradient(180deg, #ffb300 0%, #f59e0b 100%);
   color: #ffffff;
   font-size: 16.5px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.2px;
   border: none;
   cursor: pointer;
@@ -848,7 +848,7 @@
 
 .roadmap-game-badge-tag {
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   color: #a7f3d0;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -874,7 +874,7 @@
   background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   color: #ffffff;
   font-size: 10.5px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.6px;
   padding: 5px 12px;
   border-radius: 999px;
@@ -1016,7 +1016,7 @@
   top: -20px;
   right: 6px;
   font-size: 50px;
-  font-weight: 800;
+  font-weight: 700;
   color: #00796b;
   z-index: 15;
   line-height: 1;
@@ -1065,7 +1065,7 @@
 
 .roadmap-card.is-flow3-card .roadmap-card-title {
   font-size: 14.5px;
-  font-weight: 800;
+  font-weight: 700;
   color: #ffffff;
   margin: 0;
   line-height: 1.25;

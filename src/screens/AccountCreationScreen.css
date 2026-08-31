@@ -40,7 +40,7 @@
 
 .account-header-title {
   font-size: 21px;
-  font-weight: 800;
+  font-weight: 700;
   color: #0f172a;
   margin: 0;
   letter-spacing: -0.4px;
@@ -238,7 +238,7 @@
 /* Sub-step 3: Tell us your name */
 .account-name-title {
   font-size: 25px;
-  font-weight: 800;
+  font-weight: 700;
   color: #1e293b;
   text-align: center;
   margin: 12px 0 28px 0;
@@ -267,7 +267,7 @@
 /* Sub-step 4: Who are you (Role selection) */
 .account-role-title {
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 700;
   color: #1e293b;
   text-align: center;
   margin: 0 0 16px 0;

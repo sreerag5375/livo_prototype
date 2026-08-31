@@ -343,7 +343,9 @@ export default function App() {
       overlayStatusBar={
         isHome ||
         activeScreen === 'account-creation' ||
-        activeScreen === 'success'
+        activeScreen === 'success' ||
+        activeScreen === 'language' ||
+        activeScreen === 'livo-intro'
       }
       overlayHomeIndicator={activeScreen === 'success'}
     >
