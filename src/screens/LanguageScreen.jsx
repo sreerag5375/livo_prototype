@@ -6,36 +6,43 @@ const LANGUAGES = [
     id: 'en',
     label: 'English',
     icon: '/assets/images/onboarding/language/english.png',
+    ctaText: 'Continue',
   },
   {
     id: 'ml',
     label: 'മലയാളം',
     icon: '/assets/images/onboarding/language/malayalam.png',
+    ctaText: 'തുടരുക',
   },
   {
     id: 'ta',
     label: 'தமிழ்',
     icon: '/assets/images/onboarding/language/tamil.png',
+    ctaText: 'തொடரவும்',
   },
   {
     id: 'hi',
     label: 'हिन्दी',
     icon: '/assets/images/onboarding/language/hindi.png',
+    ctaText: 'जारी रखें',
   },
 ];
 
 export default function LanguageScreen({ onContinue }) {
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
 
   const handleSelect = (langId) => {
     setSelectedLanguage(langId);
   };
 
   const handleContinue = () => {
-    if (onContinue) {
+    if (selectedLanguage && onContinue) {
       onContinue(selectedLanguage);
     }
   };
+
+  const selectedLangObj = LANGUAGES.find((lang) => lang.id === selectedLanguage);
+  const ctaLabel = selectedLangObj ? selectedLangObj.ctaText : 'Continue';
 
   return (
     <div className="language-screen">
@@ -94,8 +101,9 @@ export default function LanguageScreen({ onContinue }) {
           type="button"
           className="language-continue-btn"
           onClick={handleContinue}
+          disabled={!selectedLanguage}
         >
-          Continue
+          {ctaLabel}
         </button>
       </div>
     </div>

@@ -162,10 +162,9 @@ export default function SuccessScreen({ onComplete, onBack }) {
           </svg>
         </div>
 
-        {/* Headline */}
-        <h1 className="success-headline">
-          Now we&apos;re ready to farming together.
-        </h1>
+        {/* Headline & Subtitle */}
+        <h1 className="success-title">Your account is ready!</h1>
+        <p className="success-subtitle">Let’s get farming together.</p>
       </div>
 
       {/* Bottom Video Hero (Flush to bottom, full width, no loop, no margin/padding) */}

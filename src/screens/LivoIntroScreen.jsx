@@ -46,7 +46,7 @@ export default function LivoIntroScreen({ onGetStarted, onBack }) {
           Hi, I’m <span className="livo-intro-brand">LIVO!</span>
         </h1>
         <p className="livo-intro-subtitle">
-          Your companion for every farming season.
+          Your farming companion for a better harvest and better returns.
         </p>
       </header>
 

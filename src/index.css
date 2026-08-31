@@ -11,7 +11,7 @@
   --color-text-secondary: #8e95aa;
   --color-text-muted: #575e75;
   --phone-radius: 48px;
-  --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Poppins', 'Noto Sans Malayalam', 'Noto Sans Tamil', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 * {

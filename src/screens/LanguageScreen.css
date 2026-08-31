@@ -21,20 +21,21 @@
 
 /* Header */
 .language-header {
-  padding: 120px 20px 4px 20px;
+  padding: 70px 20px 4px 20px;
   text-align: center;
+  animation: langFadeDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
 }
 
 .language-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: #1e293b;
-  margin: 12px 0 6px 0;
-  letter-spacing: -0.5px;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.4px;
 }
 
 .language-subtitle {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: #475569;
   margin: 0;
@@ -49,6 +50,7 @@
   padding: 16px 20px 20px 20px;
   box-sizing: border-box;
   flex: 1;
+  animation: langZoomIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
 }
 
 .language-hero-img {
@@ -80,12 +82,18 @@
   justify-content: center;
   position: relative;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   height: 122px;
   box-sizing: border-box;
   font-family: inherit;
+  animation: langSlideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+.language-card:nth-child(1) { animation-delay: 0.85s; }
+.language-card:nth-child(2) { animation-delay: 0.95s; }
+.language-card:nth-child(3) { animation-delay: 1.05s; }
+.language-card:nth-child(4) { animation-delay: 1.15s; }
 
 .language-card:hover {
   border-color: #cbd5e1;
@@ -163,11 +171,12 @@
   box-sizing: border-box;
   display: flex;
   justify-content: center;
+  animation: langSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.3s both;
 }
 
 .language-continue-btn {
   width: 100%;
-  max-width: 342px;
+  max-width: 100%;
   height: 50px;
   background: linear-gradient(180deg, #ffba1e 0%, #f59e0b 100%);
   border: none;
@@ -193,4 +202,46 @@
 .language-continue-btn:active {
   transform: scale(0.97);
   filter: brightness(0.96);
+}
+
+.language-continue-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+  pointer-events: none;
+  filter: grayscale(0.2);
+}
+
+/* Staggered Entry Keyframes */
+@keyframes langFadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes langZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes langSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

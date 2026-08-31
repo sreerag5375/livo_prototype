@@ -27,9 +27,12 @@ const ROLES = [
 export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
   // Step 1: Phone, Step 2: Verify, Step 3: Name, Step 4: Who are you (Role)
   const [step, setStep] = useState(1);
-  const [phone, setPhone] = useState('8113025471');
+  const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [selectedRole, setSelectedRole] = useState(null);
+  const [otpDigits, setOtpDigits] = useState(['', '', '', '']);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -37,6 +40,38 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
       videoRef.current.play().catch((e) => console.log('Video play handled', e));
     }
   }, []);
+
+  // Step 2 sequential auto-capture animation
+  useEffect(() => {
+    if (step === 2) {
+      const cleanPhone = phone.replace(/\D/g, '');
+      const digits =
+        cleanPhone.length >= 4
+          ? cleanPhone.slice(-4).split('')
+          : ['8', '5', '7', '3'];
+
+      const t0 = setTimeout(() => {
+        setOtpDigits(['', '', '', '']);
+        setIsVerified(false);
+      }, 0);
+      const t1 = setTimeout(() => setOtpDigits([digits[0], '', '', '']), 300);
+      const t2 = setTimeout(() => setOtpDigits([digits[0], digits[1], '', '']), 600);
+      const t3 = setTimeout(() => setOtpDigits([digits[0], digits[1], digits[2], '']), 900);
+      const t4 = setTimeout(() => setOtpDigits([digits[0], digits[1], digits[2], digits[3]]), 1200);
+      const t5 = setTimeout(() => setIsVerified(true), 1500);
+      const t6 = setTimeout(() => setStep(3), 2400);
+
+      return () => {
+        clearTimeout(t0);
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+        clearTimeout(t4);
+        clearTimeout(t5);
+        clearTimeout(t6);
+      };
+    }
+  }, [step, phone]);
 
   const handleNext = () => {
     if (step === 1) {
@@ -125,11 +160,11 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
       </div>
 
       {/* Bottom Sheet Container */}
-      <div className="account-bottom-sheet">
+      <div className={`account-bottom-sheet ${isInputFocused ? 'keyboard-open' : ''}`}>
         {step === 1 && (
           /* Sub-step 1: Phone Number */
           <div className="account-step-content account-fade-in">
-            <label className="account-field-label">Phone number</label>
+            <h2 className="account-field-title">Enter your number</h2>
             <div className="account-phone-row">
               {/* Country Code with Indian Flag */}
               <div className="account-country-badge">
@@ -145,7 +180,9 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
                 className="account-phone-input"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="Mobile number"
+                onFocus={() => setIsInputFocused(true)}
+                onBlur={() => setIsInputFocused(false)}
+                placeholder="Enter phone number"
                 maxLength={10}
               />
             </div>
@@ -159,14 +196,18 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
 
             {/* 4 OTP Digit Boxes */}
             <div className="account-otp-row">
-              <div className="account-otp-box">8</div>
-              <div className="account-otp-box">5</div>
-              <div className="account-otp-box">7</div>
-              <div className="account-otp-box">3</div>
+              {otpDigits.map((digit, idx) => (
+                <div
+                  key={idx}
+                  className={`account-otp-box ${digit ? 'filled' : ''}`}
+                >
+                  {digit}
+                </div>
+              ))}
             </div>
 
             {/* Verified Badge */}
-            <div className="account-verified-badge">
+            <div className={`account-verified-badge ${isVerified ? 'show' : ''}`}>
               <span className="account-verified-check">
                 <svg
                   width="18"
@@ -197,6 +238,8 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
                 className="account-name-input"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onFocus={() => setIsInputFocused(true)}
+                onBlur={() => setIsInputFocused(false)}
                 placeholder="Enter Your name"
                 autoFocus
               />
@@ -237,7 +280,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
 
         {/* Bottom Continue Button (hidden on Role selection step) */}
         {step !== 4 && (
-          <div className="account-cta-wrap">
+          <div className={`account-cta-wrap ${isInputFocused ? 'keyboard-open' : ''}`}>
             <button
               type="button"
               className="account-continue-btn"
