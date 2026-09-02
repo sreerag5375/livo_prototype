@@ -10,6 +10,14 @@ export default function FlowSelectScreen({ onSelectFlow }) {
           <button
             type="button"
             className="flow-select-primary-btn"
+            onClick={() => onSelectFlow(3)}
+          >
+            Onboarding
+          </button>
+
+          <button
+            type="button"
+            className="flow-select-primary-btn"
             onClick={() => onSelectFlow(1)}
           >
             Onboarding 1
@@ -21,14 +29,6 @@ export default function FlowSelectScreen({ onSelectFlow }) {
             onClick={() => onSelectFlow(2)}
           >
             Onboarding 2
-          </button>
-
-          <button
-            type="button"
-            className="flow-select-primary-btn"
-            onClick={() => onSelectFlow(3)}
-          >
-            Onboarding 3
           </button>
         </div>
       </div>

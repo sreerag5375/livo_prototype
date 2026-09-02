@@ -4,27 +4,31 @@ import './AccountCreationScreen.css';
 const ROLES = [
   {
     id: 'farmer',
-    label: 'Farmer',
+    labelEn: 'Farmer',
+    labelMl: 'കർഷകൻ',
     image: '/assets/images/onboarding/role/farmer.png',
   },
   {
     id: 'home_grower',
-    label: 'Home Grower',
+    labelEn: 'Home Grower',
+    labelMl: 'വീട്ടിൽ കൃഷി ചെയ്യുന്നവർ',
     image: '/assets/images/onboarding/role/home_grower.png',
   },
   {
     id: 'learner',
-    label: 'Learner',
+    labelEn: 'Learner',
+    labelMl: 'കൃഷി പഠിക്കുന്നവർ',
     image: '/assets/images/onboarding/role/leaner.png',
   },
   {
     id: 'agronomist',
-    label: 'Agronomist',
+    labelEn: 'Agronomist',
+    labelMl: 'കൃഷി വിദഗ്ധൻ',
     image: '/assets/images/onboarding/role/agronomist.png',
   },
 ];
 
-export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
+export default function AccountCreationScreen({ onComplete, onBackToIntro, language = 'en' }) {
   // Step 1: Phone, Step 2: Verify, Step 3: Name, Step 4: Who are you (Role)
   const [step, setStep] = useState(1);
   const [phone, setPhone] = useState('');
@@ -34,6 +38,8 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
   const [isVerified, setIsVerified] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const videoRef = useRef(null);
+
+  const isMl = language === 'ml';
 
   useEffect(() => {
     if (videoRef.current) {
@@ -80,35 +86,50 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
       setStep(3);
     } else if (step === 3) {
       setStep(4);
+    } else if (step === 4 && selectedRole) {
+      if (onComplete) {
+        onComplete({
+          phone,
+          name: name.trim() || 'Farmer',
+          role: selectedRole,
+        });
+      }
     }
   };
 
   const handleSelectRole = (roleId) => {
     setSelectedRole(roleId);
-    setTimeout(() => {
-      if (onComplete) {
-        onComplete({
-          phone,
-          name: name.trim() || 'Farmer',
-          role: roleId,
-        });
-      }
-    }, 200);
   };
 
-  const handleBack = () => {
-    if (step === 4) {
-      setStep(3);
-    } else if (step === 3) {
-      setStep(2);
-    } else if (step === 2) {
-      setStep(1);
-    } else if (step === 1) {
-      if (onBackToIntro) {
-        onBackToIntro();
-      }
+  const handleHeaderBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    } else if (onBackToIntro) {
+      onBackToIntro();
     }
   };
+
+  const speechText = isMl
+    ? step === 2
+      ? 'ഇനി നിങ്ങളുടെ നമ്പർ ഒന്ന് പരിശോധിക്കാം.'
+      : step === 3
+      ? 'ഞാൻ നിങ്ങളെ എന്താണ് വിളിക്കേണ്ടത്?'
+      : step === 4
+      ? 'നിങ്ങളെ ഏറ്റവും നന്നായി വിവരിക്കുന്നത് ഏതാണ്?'
+      : 'ആദ്യം നിങ്ങളുടെ നമ്പർ നൽകാം.'
+    : step === 2 || step === 3
+    ? "Perfect! Let's keep going."
+    : step === 4
+    ? 'Which one best describes you?'
+    : "Let's get connected first.";
+
+  const phoneTitleText = isMl ? 'നിങ്ങളുടെ നമ്പർ നൽകൂ' : 'Enter your number';
+  const verifyTitleText = isMl ? 'നിങ്ങളുടെ നമ്പർ പരിശോധിക്കുകയാണ്' : 'Verifying Your Number...';
+  const verifiedBadgeText = isMl ? 'നമ്പർ പരിശോധിച്ചു' : 'Number Verified';
+  const nameTitleText = isMl ? 'നിങ്ങളുടെ പേര് പറയൂ' : 'Tell us your name';
+  const namePlaceholderText = isMl ? 'പേര് നൽകൂ' : 'Enter Your name';
+  const roleTitleText = isMl ? 'ഇതിൽ നിങ്ങൾ ആരാണ്?' : 'Choose your role';
+  const ctaButtonText = isMl ? 'തുടരാം' : 'Continue';
 
   return (
     <div className="account-screen">
@@ -117,7 +138,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
         <button
           type="button"
           className="account-back-btn"
-          onClick={handleBack}
+          onClick={handleHeaderBack}
           aria-label="Go back"
         >
           <svg
@@ -150,11 +171,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
 
         {/* Floating Speech Bubble */}
         <div className="account-speech-bubble">
-          <p className="account-speech-text">
-            {step === 2 || step === 3
-              ? "Perfect! Let's keep going."
-              : "Let's get connected first."}
-          </p>
+          <p className="account-speech-text">{speechText}</p>
           <div className="account-speech-arrow" />
         </div>
       </div>
@@ -164,7 +181,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
         {step === 1 && (
           /* Sub-step 1: Phone Number */
           <div className="account-step-content account-fade-in">
-            <h2 className="account-field-title">Enter your number</h2>
+            <h2 className="account-field-title">{phoneTitleText}</h2>
             <div className="account-phone-row">
               {/* Country Code with Indian Flag */}
               <div className="account-country-badge">
@@ -192,7 +209,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
         {step === 2 && (
           /* Sub-step 2: Verification */
           <div className="account-step-content account-fade-in">
-            <h2 className="account-verify-title">Verifying Your Number...</h2>
+            <h2 className="account-verify-title">{verifyTitleText}</h2>
 
             {/* 4 OTP Digit Boxes */}
             <div className="account-otp-row">
@@ -222,7 +239,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </span>
-              <span className="account-verified-text">Number Verified</span>
+              <span className="account-verified-text">{verifiedBadgeText}</span>
             </div>
           </div>
         )}
@@ -230,7 +247,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
         {step === 3 && (
           /* Sub-step 3: Tell us your name */
           <div className="account-step-content account-fade-in">
-            <h2 className="account-name-title">Tell us your name</h2>
+            <h2 className="account-name-title">{nameTitleText}</h2>
 
             <div className="account-name-input-wrapper">
               <input
@@ -240,7 +257,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
                 onChange={(e) => setName(e.target.value)}
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
-                placeholder="Enter Your name"
+                placeholder={namePlaceholderText}
                 autoFocus
               />
             </div>
@@ -250,7 +267,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
         {step === 4 && (
           /* Sub-step 4: Who are you (Role selection) */
           <div className="account-step-content account-fade-in">
-            <h2 className="account-role-title">Who are you</h2>
+            <h2 className="account-role-title">{roleTitleText}</h2>
 
             <div className="account-role-grid">
               {ROLES.map((r) => {
@@ -270,7 +287,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
                         draggable="false"
                       />
                     </div>
-                    <span className="account-role-label">{r.label}</span>
+                    <span className="account-role-label">{isMl ? r.labelMl : r.labelEn}</span>
                   </button>
                 );
               })}
@@ -278,18 +295,17 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro }) {
           </div>
         )}
 
-        {/* Bottom Continue Button (hidden on Role selection step) */}
-        {step !== 4 && (
-          <div className={`account-cta-wrap ${isInputFocused ? 'keyboard-open' : ''}`}>
-            <button
-              type="button"
-              className="account-continue-btn"
-              onClick={handleNext}
-            >
-              Continue
-            </button>
-          </div>
-        )}
+        {/* Bottom Continue Button */}
+        <div className={`account-cta-wrap ${isInputFocused ? 'keyboard-open' : ''}`}>
+          <button
+            type="button"
+            className="account-continue-btn"
+            onClick={handleNext}
+            disabled={step === 4 && !selectedRole}
+          >
+            {ctaButtonText}
+          </button>
+        </div>
       </div>
     </div>
   );

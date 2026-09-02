@@ -1,8 +1,9 @@
 import { useRef, useEffect } from 'react';
 import './LivoIntroScreen.css';
 
-export default function LivoIntroScreen({ onGetStarted, onBack }) {
+export default function LivoIntroScreen({ onGetStarted, onBack, language = 'en' }) {
   const videoRef = useRef(null);
+  const isMl = language === 'ml';
 
   useEffect(() => {
     // Ensure video plays smoothly across all mobile browsers
@@ -12,6 +13,22 @@ export default function LivoIntroScreen({ onGetStarted, onBack }) {
       });
     }
   }, []);
+
+  const titleNode = isMl ? (
+    <>
+      ഹായ്, ഞാൻ <span className="livo-intro-brand">LIVO!</span>
+    </>
+  ) : (
+    <>
+      Hi, I’m <span className="livo-intro-brand">LIVO!</span>
+    </>
+  );
+
+  const subtitleText = isMl
+    ? 'ഓരോ കൃഷിക്കാലത്തും നിങ്ങളോടൊപ്പമുള്ള നിങ്ങളുടെ കൃഷിക്കൂട്ടുകാരൻ.'
+    : 'Your farming companion for a better harvest and better returns.';
+
+  const ctaText = isMl ? 'തുടങ്ങാം' : 'Get Started';
 
   return (
     <div className="livo-intro-screen">
@@ -42,12 +59,8 @@ export default function LivoIntroScreen({ onGetStarted, onBack }) {
 
       {/* Top Header */}
       <header className="livo-intro-header">
-        <h1 className="livo-intro-title">
-          Hi, I’m <span className="livo-intro-brand">LIVO!</span>
-        </h1>
-        <p className="livo-intro-subtitle">
-          Your farming companion for a better harvest and better returns.
-        </p>
+        <h1 className="livo-intro-title">{titleNode}</h1>
+        <p className="livo-intro-subtitle">{subtitleText}</p>
       </header>
 
       {/* Video Animation Hero */}
@@ -70,7 +83,7 @@ export default function LivoIntroScreen({ onGetStarted, onBack }) {
           className="livo-intro-cta-btn"
           onClick={onGetStarted}
         >
-          <span className="livo-intro-cta-text">Get Started</span>
+          <span className="livo-intro-cta-text">{ctaText}</span>
           <span className="livo-intro-cta-icon-wrap">
             <svg
               width="18"

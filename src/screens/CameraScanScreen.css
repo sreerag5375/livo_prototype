@@ -1,0 +1,171 @@
+.camera-scan-screen {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-image: url('/assets/images/plant_scan/carrot.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.camera-close-btn {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 30;
+}
+
+/* Viewfinder Bracket Overlay */
+.camera-viewfinder {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 260px;
+  height: 260px;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.viewfinder-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 4px solid #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.viewfinder-corner.top-left {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 18px;
+}
+
+.viewfinder-corner.top-right {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+  border-top-right-radius: 18px;
+}
+
+.viewfinder-corner.bottom-left {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+  border-bottom-left-radius: 18px;
+}
+
+.viewfinder-corner.bottom-right {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+  border-bottom-right-radius: 18px;
+}
+
+.viewfinder-scan-line {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #ffffff 50%, transparent 100%);
+  box-shadow: 0 0 12px #ffffff;
+  animation: laserScan 2.4s infinite ease-in-out;
+}
+
+@keyframes laserScan {
+  0% {
+    top: 10px;
+    opacity: 0.4;
+  }
+  50% {
+    top: 240px;
+    opacity: 1;
+  }
+  100% {
+    top: 10px;
+    opacity: 0.4;
+  }
+}
+
+/* Bottom Control Bar */
+.camera-bottom-bar {
+  width: 100%;
+  height: 90px;
+  background: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+  z-index: 20;
+  margin-top: auto;
+}
+
+.camera-gallery-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+}
+
+.camera-shutter-btn {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: transparent;
+  border: 4px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease;
+}
+
+.camera-shutter-btn:active {
+  transform: scale(0.92);
+}
+
+.shutter-inner {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.camera-scan-badge {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  user-select: none;
+}

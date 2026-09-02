@@ -228,8 +228,9 @@
 }
 
 .challenge-card.selected {
-  border-color: #00796b;
-  box-shadow: 0 6px 20px rgba(0, 121, 107, 0.18);
+  border-color: #ffba1e;
+  background-color: #fffdf5;
+  box-shadow: 0 4px 16px rgba(255, 186, 30, 0.25);
 }
 
 /* Radio circle inside card */
@@ -250,8 +251,8 @@
 }
 
 .challenge-radio.selected {
-  background-color: #00796b;
-  border-color: #00796b;
+  background-color: #f59e0b;
+  border-color: #f59e0b;
 }
 
 .challenge-card-img-container {
@@ -318,6 +319,13 @@
 .challenges-continue-btn:active {
   transform: scale(0.97);
   filter: brightness(0.96);
+}
+
+.challenges-continue-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
 }
 
 /* Toast */

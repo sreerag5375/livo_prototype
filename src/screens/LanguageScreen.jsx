@@ -41,16 +41,20 @@ export default function LanguageScreen({ onContinue }) {
     }
   };
 
-  const selectedLangObj = LANGUAGES.find((lang) => lang.id === selectedLanguage);
-  const ctaLabel = selectedLangObj ? selectedLangObj.ctaText : 'Continue';
+  const isMl = selectedLanguage === 'ml';
+  const titleText = isMl ? 'നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കൂ' : 'Choose your language';
+  const subtitleText = isMl
+    ? 'ആപ്പിലുടനീളം ഇതേ ഭാഷയായിരിക്കും ഉപയോഗിക്കുക.'
+    : "We'll use it throughout the app.";
+  const ctaLabel = isMl ? 'തുടരാം' : 'Continue';
 
   return (
     <div className="language-screen">
       <div className="language-content">
         {/* Header Section */}
         <header className="language-header">
-          <h1 className="language-title">Choose your language</h1>
-          <p className="language-subtitle">We'll use it throughout the app.</p>
+          <h1 className="language-title">{titleText}</h1>
+          <p className="language-subtitle">{subtitleText}</p>
         </header>
 
         {/* Hero Illustration */}

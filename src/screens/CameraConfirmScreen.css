@@ -1,0 +1,49 @@
+.camera-confirm-screen {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-image: url('/assets/images/plant_scan/carrot.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.camera-confirm-preview {
+  flex: 1;
+  width: 100%;
+}
+
+.camera-confirm-bottom-bar {
+  width: 100%;
+  height: 100px;
+  background: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 48px;
+  box-sizing: border-box;
+  z-index: 20;
+}
+
+.confirm-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.confirm-btn:active {
+  transform: scale(0.92);
+  filter: brightness(0.95);
+}

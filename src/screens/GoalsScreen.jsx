@@ -4,29 +4,35 @@ import './GoalsScreen.css';
 const GOALS = [
   {
     id: 'maximum_yield',
-    title: 'Maximum Yield',
+    titleEn: 'Maximum Yield',
+    titleMl: 'കൂടുതൽ വിളവ്',
     image: '/assets/images/onboarding/goals/maximum_yield.png',
   },
   {
     id: 'sustainable_farming',
-    title: 'Sustainable Farming',
+    titleEn: 'Sustainable Farming',
+    titleMl: 'സുസ്ഥിര കൃഷി',
     image: '/assets/images/onboarding/goals/sustainable_farming.png',
   },
   {
     id: 'improve_profitability',
-    title: 'Improve Profitability',
+    titleEn: 'Improve Profitability',
+    titleMl: 'കൂടുതൽ ലാഭം',
     image: '/assets/images/onboarding/goals/improve_profitability.png',
   },
   {
     id: 'resource_optimisation',
-    title: 'Resource optimisation',
+    titleEn: 'Resource Optimisation',
+    titleMl: 'കൃഷിയിൽ ചെലവും വിഭവങ്ങളും നിയന്ത്രിക്കുക',
     image: '/assets/images/onboarding/goals/resource_optimisation.png',
   },
 ];
 
-export default function GoalsScreen({ onBack, onContinue }) {
+export default function GoalsScreen({ onBack, onContinue, language = 'en' }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [toastMessage, setToastMessage] = useState(null);
+
+  const isMl = language === 'ml';
 
   const toggleGoal = (id) => {
     setSelectedIds((prev) =>
@@ -35,6 +41,7 @@ export default function GoalsScreen({ onBack, onContinue }) {
   };
 
   const handleContinue = () => {
+    if (selectedIds.length === 0) return;
     if (onContinue) {
       onContinue(selectedIds);
     } else {
@@ -42,11 +49,18 @@ export default function GoalsScreen({ onBack, onContinue }) {
     }
   };
 
-
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 2000);
   };
+
+  const questionNode = isMl ? (
+    'കൃഷിയിലൂടെ നിങ്ങൾ എന്താണ് നേടാൻ ആഗ്രഹിക്കുന്നത്?'
+  ) : (
+    'What do you want to achieve through farming?'
+  );
+
+  const ctaButtonText = isMl ? 'തുടരാം' : 'Continue';
 
   return (
     <div className="goals-screen">
@@ -126,9 +140,7 @@ export default function GoalsScreen({ onBack, onContinue }) {
           </div>
 
           <div className="goals-speech-bubble">
-            <p className="goals-question">
-              What would you like to <span className="goals-improve-highlight">improve</span> this season?
-            </p>
+            <p className="goals-question">{questionNode}</p>
           </div>
         </section>
 
@@ -136,6 +148,7 @@ export default function GoalsScreen({ onBack, onContinue }) {
         <section className="goals-grid">
           {GOALS.map((goal) => {
             const isSelected = selectedIds.includes(goal.id);
+            const labelText = isMl ? goal.titleMl : goal.titleEn;
             return (
               <div
                 key={goal.id}
@@ -164,14 +177,14 @@ export default function GoalsScreen({ onBack, onContinue }) {
                   <div className="goal-card-img-container">
                     <img
                       src={goal.image}
-                      alt={goal.title}
+                      alt={labelText}
                       className="goal-card-img"
                       draggable="false"
                     />
                   </div>
                 </div>
 
-                <span className="goal-card-label">{goal.title}</span>
+                <span className="goal-card-label">{labelText}</span>
               </div>
             );
           })}
@@ -184,8 +197,9 @@ export default function GoalsScreen({ onBack, onContinue }) {
           type="button"
           className="goals-continue-btn"
           onClick={handleContinue}
+          disabled={selectedIds.length === 0}
         >
-          Continue
+          {ctaButtonText}
         </button>
       </footer>
 

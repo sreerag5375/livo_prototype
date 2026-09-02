@@ -11,12 +11,17 @@ import ChallengesScreen from './screens/ChallengesScreen';
 import GoalsScreen from './screens/GoalsScreen';
 import RoadmapScreen from './screens/RoadmapScreen';
 import HomeScreen from './screens/HomeScreen';
+import CameraScanScreen from './screens/CameraScanScreen';
+import CameraConfirmScreen from './screens/CameraConfirmScreen';
+import ScanResultScreen from './screens/ScanResultScreen';
+import TreatmentPlanScreen from './screens/TreatmentPlanScreen';
 import SharedCardTransition from './components/SharedCardTransition';
 import RowCardsTransition from './components/RowCardsTransition';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('flow-select');
   const [activeFlow, setActiveFlow] = useState(1);
+  const [language, setLanguage] = useState('en');
   const [transitionState, setTransitionState] = useState(null);
   const [roadmapSource, setRoadmapSource] = useState('goals');
   const [sharedTransition, setSharedTransition] = useState(null);
@@ -37,6 +42,7 @@ export default function App() {
   // Trigger splash transition only when on splash screen
   useEffect(() => {
     if (currentScreen !== 'splash') return;
+
     const timer = setTimeout(() => {
       startSplashTransition();
     }, 1800);
@@ -44,22 +50,23 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [currentScreen]);
 
-  const handleSelectFlow = (flowId) => {
-    setActiveFlow(flowId);
-    setTransitionState({ from: 'flow-select', to: 'splash', direction: 'fade' });
-    setTimeout(() => {
-      setCurrentScreen('splash');
-      setTransitionState(null);
-    }, 380);
+  const selectFlowAndStart = (flowNum) => {
+    setActiveFlow(flowNum);
+    setCurrentScreen('splash');
   };
 
-  const goToLivoIntro = () => {
+  const goToLanguageFromSplash = () => {
+    startSplashTransition();
+  };
+
+  const goToLivoIntro = (selectedLang) => {
+    if (selectedLang) setLanguage(selectedLang);
     if (transitionState) return;
     setTransitionState({ from: 'language', to: 'livo-intro', direction: 'slide-left' });
     setTimeout(() => {
       setCurrentScreen('livo-intro');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
   const goBackToLanguage = () => {
@@ -68,7 +75,7 @@ export default function App() {
     setTimeout(() => {
       setCurrentScreen('language');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
   const goToAccountCreation = () => {
@@ -77,7 +84,7 @@ export default function App() {
     setTimeout(() => {
       setCurrentScreen('account-creation');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
   const goBackToLivoIntro = () => {
@@ -86,7 +93,7 @@ export default function App() {
     setTimeout(() => {
       setCurrentScreen('livo-intro');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
   const goToSuccessFromAccount = () => {
@@ -95,7 +102,7 @@ export default function App() {
     setTimeout(() => {
       setCurrentScreen('success');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
   const goBackToAccountFromSuccess = () => {
@@ -104,25 +111,16 @@ export default function App() {
     setTimeout(() => {
       setCurrentScreen('account-creation');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
-  const goToChallengesFromSuccess = () => {
+  const goToOnboardingFromSuccess = () => {
     if (transitionState) return;
-    setTransitionState({ from: 'success', to: 'challenges', direction: 'slide-left' });
+    setTransitionState({ from: 'success', to: 'onboarding', direction: 'slide-left' });
     setTimeout(() => {
-      setCurrentScreen('challenges');
+      setCurrentScreen('onboarding');
       setTransitionState(null);
-    }, 380);
-  };
-
-  const goBackToSuccessFromChallenges = () => {
-    if (transitionState) return;
-    setTransitionState({ from: 'challenges', to: 'success', direction: 'slide-right' });
-    setTimeout(() => {
-      setCurrentScreen('success');
-      setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
   const goToChallenges = () => {
@@ -131,7 +129,25 @@ export default function App() {
     setTimeout(() => {
       setCurrentScreen('challenges');
       setTransitionState(null);
-    }, 380);
+    }, 400);
+  };
+
+  const goToHomeFromOnboarding = () => {
+    if (transitionState) return;
+    setTransitionState({ from: 'onboarding', to: 'home', direction: 'slide-left' });
+    setTimeout(() => {
+      setCurrentScreen('home');
+      setTransitionState(null);
+    }, 400);
+  };
+
+  const goBackToOnboardingFromChallenges = () => {
+    if (transitionState) return;
+    setTransitionState({ from: 'challenges', to: 'onboarding', direction: 'slide-right' });
+    setTimeout(() => {
+      setCurrentScreen('onboarding');
+      setTransitionState(null);
+    }, 400);
   };
 
   const goToGoals = () => {
@@ -140,7 +156,7 @@ export default function App() {
     setTimeout(() => {
       setCurrentScreen('goals');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
   const goBackToChallenges = () => {
@@ -149,26 +165,30 @@ export default function App() {
     setTimeout(() => {
       setCurrentScreen('challenges');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
   const goToRoadmap = () => {
-    if (transitionState) return;
     setRoadmapSource('goals');
+    if (transitionState) return;
     setTransitionState({ from: 'goals', to: 'roadmap', direction: 'slide-left' });
     setTimeout(() => {
       setCurrentScreen('roadmap');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
-  const goBackToGoals = () => {
-    if (transitionState) return;
-    setTransitionState({ from: 'roadmap', to: 'goals', direction: 'slide-right' });
-    setTimeout(() => {
-      setCurrentScreen('goals');
-      setTransitionState(null);
-    }, 380);
+  const handleRoadmapBack = () => {
+    if (roadmapSource === 'home') {
+      goToHome();
+    } else {
+      if (transitionState) return;
+      setTransitionState({ from: 'roadmap', to: 'goals', direction: 'slide-right' });
+      setTimeout(() => {
+        setCurrentScreen('goals');
+        setTransitionState(null);
+      }, 400);
+    }
   };
 
   const goToHome = () => {
@@ -177,208 +197,126 @@ export default function App() {
     setTimeout(() => {
       setCurrentScreen('home');
       setTransitionState(null);
-    }, 380);
+    }, 400);
+  };
+
+  // Camera Scan Flow Handlers
+  const goToCameraScan = () => {
+    setCurrentScreen('camera-scan');
+  };
+
+  const goToCameraConfirm = () => {
+    setCurrentScreen('camera-confirm');
+  };
+
+  const goToScanResult = () => {
+    setCurrentScreen('scan-result');
+  };
+
+  const goToTreatmentPlan = () => {
+    setCurrentScreen('treatment-plan');
   };
 
   const openFarmingPlanFromHome = () => {
-    if (transitionState) return;
     setRoadmapSource('home');
+    if (transitionState) return;
     setTransitionState({ from: 'home', to: 'roadmap', direction: 'slide-left' });
     setTimeout(() => {
       setCurrentScreen('roadmap');
       setTransitionState(null);
-    }, 380);
+    }, 400);
   };
 
-  const handleRoadmapBack = () => {
-    if (transitionState) return;
-    if (roadmapSource === 'home') {
-      setTransitionState({ from: 'roadmap', to: 'home', direction: 'slide-right' });
-      setTimeout(() => {
-        setCurrentScreen('home');
-        setTransitionState(null);
-      }, 380);
-    } else {
-      goBackToGoals();
-    }
-  };
-
-  // Automated shared-element transition from Farming Plan to Home
-  const startSharedTransitionToHome = (roadmapElement, stepData, _stepIndex = 0) => {
-    if (!containerRef.current || !roadmapElement) {
-      goToHome();
-      return;
-    }
-
+  // Shared Card FLIP Transition from Roadmap Card 1 to Home Card 1
+  const startSharedTransitionToHome = (cardElement, cardData, _cardIndex = 0) => {
     if (activeFlow === 3) {
       // Flow 3: Entire Row Upward Glide Transition
-      const containerRect = containerRef.current?.getBoundingClientRect();
-      const sRect = roadmapElement?.getBoundingClientRect();
-      const eRect = homeCardRef.current?.getBoundingClientRect();
+      const carouselEl = containerRef.current
+        ? containerRef.current.querySelector('.roadmap-flow3-vertical-list') ||
+          containerRef.current.querySelector('.roadmap-carousel')
+        : null;
 
-      // Measure starting position of cards row in Farming Plan (lower on screen)
-      const measuredStartTop =
-        containerRect && sRect ? sRect.top - containerRect.top + 28 : 460;
-      // Target position in Home's "Pick For You" carousel
-      const measuredEndTop =
-        containerRect && eRect && eRect.top > 0
-          ? eRect.top - containerRect.top
-          : 396;
+      const startTop = carouselEl ? carouselEl.getBoundingClientRect().top : 300;
+      const endTop = 160;
 
-      // Ensure startTop is strictly lower than endTop for the smooth upward movement!
-      const endTop = measuredEndTop;
-      const startTop = Math.max(measuredStartTop, endTop + 54);
-
-      const FLOW_3_CARDS = [
+      const flow3Cards = [
         {
           id: 1,
           title: 'Plant Health Check',
-          description: 'A healthy crop is the foundation of your farming plan.',
+          description: 'Check your crop for early problems',
           image: '/assets/images/onboarding/roadmap/1.png',
         },
         {
           id: 2,
-          title: 'Crop Planning',
-          description: 'Personalized crop advisory suited to your farm soil.',
-          image: '/assets/images/onboarding/roadmap/2.png',
+          title: 'Crop Recommendation',
+          description: 'Get the right action for your crop',
+          image: '/assets/images/onboarding/roadmap/5.png',
         },
         {
           id: 3,
-          title: 'Weather Alerts',
-          description: '7-day localized forecast to time your farm activities.',
+          title: 'Weather Planning',
+          description: 'Plan farm work around the weather',
           image: '/assets/images/onboarding/roadmap/3.png',
         },
         {
           id: 4,
-          title: 'Treatment & Spraying',
-          description: 'Best time and dosage to protect your crop health.',
+          title: 'Spraying Conditions',
+          description: 'Find the right time to spray',
           image: '/assets/images/onboarding/roadmap/4.png',
         },
       ];
 
-      setRowTransition({
-        startTop,
-        endTop,
-        cards: FLOW_3_CARDS,
-      });
+      setRowTransition({ startTop, endTop, cards: flow3Cards });
+      setCurrentScreen('home');
       return;
     }
 
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const sRect = roadmapElement.getBoundingClientRect();
-    const eRect = homeCardRef.current?.getBoundingClientRect();
+    // Flows 1 & 2: Shared Card FLIP Transition
+    const targetEl = homeCardRef.current;
+    if (!cardElement || !targetEl) {
+      goToHome();
+      return;
+    }
 
-    const startBox = {
-      top: sRect.top - containerRect.top,
-      left: sRect.left - containerRect.left,
-      width: sRect.width,
-      height: sRect.height,
-    };
-
-    const endBox = eRect
-      ? {
-          top: eRect.top - containerRect.top,
-          left: Math.max(20, eRect.left - containerRect.left),
-          width: eRect.width,
-          height: eRect.height,
-        }
-      : {
-          top: 360,
-          left: 20,
-          width: 165,
-          height: 212,
-        };
-
-    const targetStep = stepData || {
-      image: '/assets/images/onboarding/roadmap/1.png',
-      title: 'Plant Health Check',
-      stepBadge: 'STEP 1 OF 4',
-    };
+    const startRect = cardElement.getBoundingClientRect();
+    const endRect = targetEl.getBoundingClientRect();
 
     setSharedTransition({
-      startRect: startBox,
-      endRect: endBox,
-      cardData: {
-        image: targetStep.image,
-        title: targetStep.title,
-        stepBadge: targetStep.stepBadge,
+      startRect,
+      endRect,
+      cardData: cardData || {
+        id: 1,
+        title: 'Plant Health Check',
+        description: 'A healthy crop is the foundation of your farming plan.',
+        image: '/assets/images/onboarding/roadmap/1.png',
       },
     });
+
+    setCurrentScreen('home');
   };
 
   const finishSharedTransition = () => {
     setSharedTransition(null);
-    setCurrentScreen('home');
-    setRoadmapSource('home');
   };
 
   const finishRowTransition = () => {
     setRowTransition(null);
-    setCurrentScreen('home');
-    setRoadmapSource('home');
   };
-
-  // Determine active/visible screen
-  const activeScreen = transitionState ? transitionState.to : currentScreen;
-  const isDarkBottom =
-    activeScreen === 'livo-intro' || activeScreen === 'onboarding';
-  const isHome =
-    activeScreen === 'home' ||
-    sharedTransition !== null ||
-    rowTransition !== null;
 
   return (
     <MobileFrame
-      lightContent={false}
-      statusBarLight={isHome}
-      homeIndicatorLight={isDarkBottom || activeScreen === 'success'}
-      screenBg={activeScreen === 'account-creation' ? '#C6ECFE' : '#FFFFFF'}
-      bottomBg={
-        activeScreen === 'livo-intro'
-          ? '#261205'
-          : activeScreen === 'onboarding'
-          ? '#653814'
-          : '#FFFFFF'
-      }
-      overlayStatusBar={
-        isHome ||
-        activeScreen === 'account-creation' ||
-        activeScreen === 'success' ||
-        activeScreen === 'language' ||
-        activeScreen === 'livo-intro'
-      }
-      overlayHomeIndicator={activeScreen === 'success'}
+      bottomBg={currentScreen === 'onboarding' ? '#FFFFFF' : '#4a2508'}
+      overlayStatusBar={['onboarding', 'camera-scan', 'camera-confirm'].includes(currentScreen)}
     >
-      <div className="screens-container" ref={containerRef}>
-        {/* Flow Selection Screen */}
-        {(currentScreen === 'flow-select' || transitionState?.from === 'flow-select') && (
-          <div
-            className={`screen-layer ${
-              transitionState?.from === 'flow-select' ? 'screen-exit' : ''
-            }`}
-          >
-            <FlowSelectScreen onSelectFlow={handleSelectFlow} />
-          </div>
+      <div className="app-screen-container" ref={containerRef}>
+        {/* Start Screen: Choose Onboarding Flow */}
+        {currentScreen === 'flow-select' && (
+          <FlowSelectScreen onSelectFlow={selectFlowAndStart} />
         )}
 
-        {/* Splash Screen */}
-        {(currentScreen === 'splash' ||
-          transitionState?.to === 'splash' ||
-          transitionState?.from === 'splash') && (
-          <div
-            className={`screen-layer ${
-              transitionState?.to === 'splash'
-                ? 'screen-enter'
-                : transitionState?.from === 'splash'
-                ? 'screen-exit'
-                : ''
-            }`}
-          >
-            <SplashScreen
-              onSkip={startSplashTransition}
-              isExiting={transitionState?.from === 'splash'}
-            />
-          </div>
+        {/* Animated Splash Screen */}
+        {currentScreen === 'splash' && (
+          <SplashScreen onComplete={goToLanguageFromSplash} />
         )}
 
         {/* Language Selection Screen */}
@@ -387,8 +325,8 @@ export default function App() {
           transitionState?.from === 'language') && (
           <div
             className={`screen-layer ${
-              transitionState?.from === 'splash'
-                ? 'screen-enter'
+              transitionState?.to === 'language' && transitionState?.direction === 'fade'
+                ? 'fade-enter'
                 : transitionState?.from === 'language' && transitionState?.direction === 'slide-left'
                 ? 'slide-left-exit'
                 : transitionState?.to === 'language' && transitionState?.direction === 'slide-right'
@@ -398,6 +336,7 @@ export default function App() {
           >
             <LanguageScreen
               onContinue={goToLivoIntro}
+              initialLanguage={language}
             />
           </div>
         )}
@@ -422,11 +361,12 @@ export default function App() {
             <LivoIntroScreen
               onGetStarted={goToAccountCreation}
               onBack={goBackToLanguage}
+              language={language}
             />
           </div>
         )}
 
-        {/* Account Creation Screen (Phone -> Verify -> Name) */}
+        {/* Account Creation Screen */}
         {(currentScreen === 'account-creation' ||
           transitionState?.to === 'account-creation' ||
           transitionState?.from === 'account-creation') && (
@@ -446,11 +386,12 @@ export default function App() {
             <AccountCreationScreen
               onComplete={goToSuccessFromAccount}
               onBackToIntro={goBackToLivoIntro}
+              language={language}
             />
           </div>
         )}
 
-        {/* Success Celebration Screen (Checkmark + Confetti + Video) */}
+        {/* Success Celebration Screen */}
         {(currentScreen === 'success' ||
           transitionState?.to === 'success' ||
           transitionState?.from === 'success') && (
@@ -468,30 +409,35 @@ export default function App() {
             }`}
           >
             <SuccessScreen
-              onComplete={goToChallengesFromSuccess}
+              onComplete={goToOnboardingFromSuccess}
               onBack={goBackToAccountFromSuccess}
+              activeFlow={activeFlow}
+              language={language}
             />
           </div>
         )}
 
-        {/* Onboarding Screen */}
+        {/* Onboarding / Guidance Screen */}
         {(currentScreen === 'onboarding' ||
           transitionState?.to === 'onboarding' ||
           transitionState?.from === 'onboarding') && (
           <div
             className={`screen-layer ${
-              transitionState?.from === 'splash'
-                ? 'screen-enter'
-                : transitionState?.from === 'onboarding' && transitionState?.direction === 'slide-left'
-                ? 'slide-left-exit'
+              transitionState?.to === 'onboarding' && transitionState?.direction === 'slide-left'
+                ? 'slide-left-enter'
                 : transitionState?.to === 'onboarding' && transitionState?.direction === 'slide-right'
                 ? 'slide-right-enter'
+                : transitionState?.from === 'onboarding' && transitionState?.direction === 'slide-left'
+                ? 'slide-left-exit'
+                : transitionState?.from === 'onboarding' && transitionState?.direction === 'slide-right'
+                ? 'slide-right-exit'
                 : ''
             }`}
           >
             <OnboardingScreen
               onNext={goToChallenges}
-              onSkip={goToChallenges}
+              onSkip={goToHomeFromOnboarding}
+              language={language}
             />
           </div>
         )}
@@ -514,8 +460,9 @@ export default function App() {
             }`}
           >
             <ChallengesScreen
-              onBack={goBackToSuccessFromChallenges}
+              onBack={goBackToOnboardingFromChallenges}
               onContinue={goToGoals}
+              language={language}
             />
           </div>
         )}
@@ -540,11 +487,12 @@ export default function App() {
             <GoalsScreen
               onBack={goBackToChallenges}
               onContinue={goToRoadmap}
+              language={language}
             />
           </div>
         )}
 
-        {/* Roadmap Screen with Path Carousel */}
+        {/* Roadmap Screen */}
         {(currentScreen === 'roadmap' ||
           transitionState?.to === 'roadmap' ||
           transitionState?.from === 'roadmap' ||
@@ -570,13 +518,54 @@ export default function App() {
           >
             <RoadmapScreen
               onBack={handleRoadmapBack}
-              onStartScan={goToHome}
+              onStartScan={goToCameraScan}
               onGoHome={goToHome}
               onPlanReadyForHome={startSharedTransitionToHome}
               skipGeneration={roadmapSource === 'home'}
               hideCard1={sharedTransition !== null}
               isExitingToHome={sharedTransition !== null || rowTransition !== null}
               activeFlow={activeFlow}
+            />
+          </div>
+        )}
+
+        {/* Camera Scan Viewfinder Screen */}
+        {currentScreen === 'camera-scan' && (
+          <div className="screen-layer">
+            <CameraScanScreen
+              onClose={() => setCurrentScreen('roadmap')}
+              onCapture={goToCameraConfirm}
+            />
+          </div>
+        )}
+
+        {/* Camera Photo Confirmation Screen */}
+        {currentScreen === 'camera-confirm' && (
+          <div className="screen-layer">
+            <CameraConfirmScreen
+              onRetake={goToCameraScan}
+              onConfirm={goToScanResult}
+            />
+          </div>
+        )}
+
+        {/* Scan Result Diagnosis Screen */}
+        {currentScreen === 'scan-result' && (
+          <div className="screen-layer">
+            <ScanResultScreen
+              onBack={goToCameraScan}
+              onViewTreatment={goToTreatmentPlan}
+            />
+          </div>
+        )}
+
+        {/* Detailed Treatment Plan Screen */}
+        {currentScreen === 'treatment-plan' && (
+          <div className="screen-layer">
+            <TreatmentPlanScreen
+              onBack={goToScanResult}
+              onDownload={goToHome}
+              onShare={goToHome}
             />
           </div>
         )}
@@ -613,7 +602,11 @@ export default function App() {
               isTransitioningFromPlan={sharedTransition !== null || rowTransition !== null}
               hideCard1={sharedTransition !== null}
               hideAllCards={rowTransition !== null}
-              onActionClick={(action) => console.log('Home action:', action)}
+              onActionClick={(action) => {
+                if (action === 'health-check' || action === 'scan') {
+                  goToCameraScan();
+                }
+              }}
               onViewAllPlan={openFarmingPlanFromHome}
               _activeFlow={activeFlow}
             />
@@ -631,7 +624,7 @@ export default function App() {
           />
         )}
 
-        {/* Row Cards Transition Overlay (Flow 3: Entire Row Upward Glide) */}
+        {/* Row Cards Transition Overlay (Flow 3) */}
         {rowTransition && (
           <RowCardsTransition
             startTop={rowTransition.startTop}
@@ -644,7 +637,3 @@ export default function App() {
     </MobileFrame>
   );
 }
-
-
-
-

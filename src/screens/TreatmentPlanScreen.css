@@ -1,0 +1,148 @@
+.treatment-plan-screen {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 18px 24px 18px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  position: relative;
+}
+
+.treatment-plan-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.treatment-back-btn {
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #0f766e;
+}
+
+.treatment-header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f766e;
+  margin: 0;
+}
+
+.treatment-section-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 12px 0;
+}
+
+/* Treatment Card */
+.treatment-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  margin-bottom: 14px;
+}
+
+.treatment-for-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #0f766e;
+  margin: 0 0 12px 0;
+}
+
+.treatment-group {
+  margin-bottom: 12px;
+}
+
+.group-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  margin: 0 0 4px 0;
+}
+
+.treatment-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.add-calendar-btn {
+  width: 100%;
+  height: 40px;
+  background: #ffffff;
+  border: 1.5px solid #0f766e;
+  border-radius: 10px;
+  color: #0f766e;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  transition: background 0.15s ease;
+}
+
+.add-calendar-btn:active {
+  background: #f0fdf4;
+}
+
+/* Footer Action Bar */
+.treatment-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding-top: 8px;
+}
+
+.treatment-footer-btn {
+  flex: 1;
+  height: 46px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.download-btn {
+  background: #ffffff;
+  border: 1.5px solid #0f766e;
+  color: #0f766e;
+}
+
+.share-btn {
+  background: #0f766e;
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.32);
+}
+
+.treatment-footer-btn:active {
+  transform: scale(0.98);
+  filter: brightness(0.95);
+}

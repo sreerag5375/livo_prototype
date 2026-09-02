@@ -4,29 +4,35 @@ import './ChallengesScreen.css';
 const CHALLENGES = [
   {
     id: 'crop_planning',
-    title: 'Crop Planning',
+    titleEn: 'Crop Planning',
+    titleMl: 'കൃഷി ആസൂത്രണം',
     image: '/assets/images/onboarding/challenges/crop_planning.png',
   },
   {
     id: 'pest_disease',
-    title: 'Pest & Disease',
+    titleEn: 'Pests & Diseases',
+    titleMl: 'കീടങ്ങളും രോഗങ്ങളും',
     image: '/assets/images/onboarding/challenges/pest.png',
   },
   {
     id: 'weather',
-    title: 'Unpredictable weather',
+    titleEn: 'Unpredictable Weather',
+    titleMl: 'പ്രവചനാതീതമായ കാലാവസ്ഥ',
     image: '/assets/images/onboarding/challenges/weather.png',
   },
   {
     id: 'poor_harvest',
-    title: 'Poor Harvest',
+    titleEn: 'Poor Harvest',
+    titleMl: 'കുറഞ്ഞ വിളവ്',
     image: '/assets/images/onboarding/challenges/poor_harvest.png',
   },
 ];
 
-export default function ChallengesScreen({ onBack, onContinue }) {
+export default function ChallengesScreen({ onBack, onContinue, language = 'en' }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [toastMessage, setToastMessage] = useState(null);
+
+  const isMl = language === 'ml';
 
   const toggleChallenge = (id) => {
     setSelectedIds((prev) =>
@@ -35,6 +41,7 @@ export default function ChallengesScreen({ onBack, onContinue }) {
   };
 
   const handleContinue = () => {
+    if (selectedIds.length === 0) return;
     if (onContinue) {
       onContinue(selectedIds);
     } else {
@@ -42,11 +49,20 @@ export default function ChallengesScreen({ onBack, onContinue }) {
     }
   };
 
-
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 2000);
   };
+
+  const questionNode = isMl ? (
+    'നിങ്ങളുടെ കൃഷിയിൽ എന്തൊക്കെ പ്രശ്നങ്ങളാണ് നേരിടുന്നത്?'
+  ) : (
+    <>
+      What <span className="challenges-worry-highlight">worries</span> you most about your farm?
+    </>
+  );
+
+  const ctaButtonText = isMl ? 'തുടരാം' : 'Continue';
 
   return (
     <div className="challenges-screen">
@@ -131,9 +147,7 @@ export default function ChallengesScreen({ onBack, onContinue }) {
           </div>
 
           <div className="challenges-speech-bubble">
-            <p className="challenges-question">
-              What <span className="challenges-worry-highlight">worries</span> you the most about your farm?
-            </p>
+            <p className="challenges-question">{questionNode}</p>
           </div>
         </section>
 
@@ -141,6 +155,7 @@ export default function ChallengesScreen({ onBack, onContinue }) {
         <section className="challenges-grid">
           {CHALLENGES.map((challenge) => {
             const isSelected = selectedIds.includes(challenge.id);
+            const labelText = isMl ? challenge.titleMl : challenge.titleEn;
             return (
               <div
                 key={challenge.id}
@@ -169,14 +184,14 @@ export default function ChallengesScreen({ onBack, onContinue }) {
                   <div className="challenge-card-img-container">
                     <img
                       src={challenge.image}
-                      alt={challenge.title}
+                      alt={labelText}
                       className="challenge-card-img"
                       draggable="false"
                     />
                   </div>
                 </div>
 
-                <span className="challenge-card-label">{challenge.title}</span>
+                <span className="challenge-card-label">{labelText}</span>
               </div>
             );
           })}
@@ -189,8 +204,9 @@ export default function ChallengesScreen({ onBack, onContinue }) {
           type="button"
           className="challenges-continue-btn"
           onClick={handleContinue}
+          disabled={selectedIds.length === 0}
         >
-          Continue
+          {ctaButtonText}
         </button>
       </footer>
 

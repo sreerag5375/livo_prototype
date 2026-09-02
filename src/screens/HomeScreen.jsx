@@ -12,7 +12,7 @@ const PICK_FOR_YOU_CARDS = [
     id: 2,
     title: 'Crop Planning',
     description: 'Personalized crop advisory suited to your farm soil.',
-    image: '/assets/images/onboarding/roadmap/2.png',
+    image: '/assets/images/onboarding/roadmap/5.png',
   },
   {
     id: 3,
