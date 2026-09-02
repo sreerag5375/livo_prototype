@@ -204,25 +204,55 @@
 
 /* Sub-step 2: Verification */
 .account-verify-title {
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 700;
   color: #1e293b;
   text-align: center;
-  margin: 12px 0 24px 0;
+  margin: 14px 0 20px 0;
+  transition: all 0.35s ease;
+}
+
+.account-verify-title.is-verified-title {
+  color: #047857;
+}
+
+.account-otp-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80px;
+  margin-top: 10px;
+  margin-bottom: 12px;
 }
 
 .account-otp-row {
   display: flex;
   justify-content: center;
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: 12px;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease, gap 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+}
+
+.account-otp-row.merging {
+  gap: -10px;
+  transform: scale(0.65);
+  opacity: 0.7;
+}
+
+.account-otp-row.merged {
+  gap: -24px;
+  transform: scale(0.1);
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
 }
 
 .account-otp-box {
   width: 52px;
   height: 56px;
   border-radius: 14px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid #cbd5e1;
   background: #ffffff;
   display: flex;
   align-items: center;
@@ -230,17 +260,29 @@
   font-size: 22px;
   font-weight: 700;
   color: #0f172a;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.account-otp-box.active-target {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
 .account-otp-box.filled {
   border-color: #10b981;
   background: #ecfdf5;
   color: #047857;
-  transform: scale(1.06);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18);
+  transform: scale(1.04);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.22);
   animation: otpPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.account-otp-row.merging .account-otp-box {
+  border-color: #10b981;
+  background: #10b981;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(16, 185, 129, 0.55);
 }
 
 @keyframes otpPop {
@@ -251,37 +293,60 @@
     transform: scale(1.1);
   }
   100% {
-    transform: scale(1.06);
+    transform: scale(1.04);
   }
 }
 
-.account-verified-badge {
+/* Combined Single Checkmark Box [ ✔ ] */
+.account-merged-check-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  margin-top: 16px;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45);
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  min-height: 24px;
+  transform: scale(0.2);
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.35s ease;
+  position: absolute;
+  pointer-events: none;
 }
 
-.account-verified-badge.show {
+.account-merged-check-box.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: scale(1);
+  position: relative;
+  animation: checkPopSmooth 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.account-verified-check {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@keyframes checkPopSmooth {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.account-verified-text {
-  font-size: 14.5px;
-  font-weight: 600;
-  color: #10b981;
+.account-resend-text {
+  font-size: 13px;
+  color: #64748b;
+  text-align: center;
+  margin-top: 18px;
+}
+
+.account-resend-link {
+  color: #00796b;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 /* Sub-step 3: Tell us your name */
@@ -411,6 +476,18 @@
 
 .account-cta-wrap.keyboard-open {
   margin-top: 24px;
+  animation: accountCtaSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes accountCtaSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .account-continue-btn {

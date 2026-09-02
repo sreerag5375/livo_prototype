@@ -35,11 +35,20 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
   const [name, setName] = useState('');
   const [selectedRole, setSelectedRole] = useState(null);
   const [otpDigits, setOtpDigits] = useState(['', '', '', '']);
-  const [isVerified, setIsVerified] = useState(false);
+  const [otpPhase, setOtpPhase] = useState('typing'); // 'typing' | 'merging' | 'merged'
   const [isInputFocused, setIsInputFocused] = useState(false);
   const videoRef = useRef(null);
 
   const isMl = language === 'ml';
+  const cleanPhone = phone.replace(/\D/g, '');
+  const isPhoneValid = cleanPhone.length === 10;
+  const isNameValid = name.trim().length > 0;
+
+  // When keyboard is open: ONLY show Continue button above keyboard when phone length reaches 10 digits (Step 1) or name is typed (Step 3)
+  const isKeyboardOpen = isInputFocused;
+  const shouldShowFloatingCta = isKeyboardOpen
+    ? (step === 1 && isPhoneValid) || (step === 3 && isNameValid)
+    : true;
 
   useEffect(() => {
     if (videoRef.current) {
@@ -47,25 +56,40 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
     }
   }, []);
 
-  // Step 2 sequential auto-capture animation
+  // Step 2 sequential auto-capture & smooth merging morph into green checkmark box
   useEffect(() => {
     if (step === 2) {
-      const cleanPhone = phone.replace(/\D/g, '');
       const digits =
         cleanPhone.length >= 4
           ? cleanPhone.slice(-4).split('')
-          : ['8', '5', '7', '3'];
+          : ['6', '9', '8', '8'];
+
+      setOtpPhase('typing');
 
       const t0 = setTimeout(() => {
         setOtpDigits(['', '', '', '']);
-        setIsVerified(false);
       }, 0);
       const t1 = setTimeout(() => setOtpDigits([digits[0], '', '', '']), 300);
       const t2 = setTimeout(() => setOtpDigits([digits[0], digits[1], '', '']), 600);
       const t3 = setTimeout(() => setOtpDigits([digits[0], digits[1], digits[2], '']), 900);
-      const t4 = setTimeout(() => setOtpDigits([digits[0], digits[1], digits[2], digits[3]]), 1200);
-      const t5 = setTimeout(() => setIsVerified(true), 1500);
-      const t6 = setTimeout(() => setStep(3), 2400);
+      const t4 = setTimeout(() => {
+        setOtpDigits([digits[0], digits[1], digits[2], digits[3]]);
+      }, 1200);
+
+      // Phase 2: All 4 digits filled -> smooth merging transition inwards
+      const t5 = setTimeout(() => {
+        setOtpPhase('merging');
+      }, 1600);
+
+      // Phase 3: Combine into single Checkmark Box [ ✔ ] & "Verified successfully"
+      const t6 = setTimeout(() => {
+        setOtpPhase('merged');
+      }, 2100);
+
+      // Phase 4: Wait 3.5s on verified state then proceed to Step 3 (Tell us your name)
+      const t7 = setTimeout(() => {
+        setStep(3);
+      }, 5600);
 
       return () => {
         clearTimeout(t0);
@@ -75,16 +99,18 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
         clearTimeout(t4);
         clearTimeout(t5);
         clearTimeout(t6);
+        clearTimeout(t7);
       };
     }
-  }, [step, phone]);
+  }, [step, cleanPhone]);
 
   const handleNext = () => {
-    if (step === 1) {
+    setIsInputFocused(false);
+    if (step === 1 && isPhoneValid) {
       setStep(2);
     } else if (step === 2) {
       setStep(3);
-    } else if (step === 3) {
+    } else if (step === 3 && isNameValid) {
       setStep(4);
     } else if (step === 4 && selectedRole) {
       if (onComplete) {
@@ -124,8 +150,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
     : "Let's get connected first.";
 
   const phoneTitleText = isMl ? 'നിങ്ങളുടെ നമ്പർ നൽകൂ' : 'Enter your number';
-  const verifyTitleText = isMl ? 'നിങ്ങളുടെ നമ്പർ പരിശോധിക്കുകയാണ്' : 'Verifying Your Number...';
-  const verifiedBadgeText = isMl ? 'നമ്പർ പരിശോധിച്ചു' : 'Number Verified';
+  const verifyTitleText = isMl ? "Let's verify your number" : "Let's verify your number";
   const nameTitleText = isMl ? 'നിങ്ങളുടെ പേര് പറയൂ' : 'Tell us your name';
   const namePlaceholderText = isMl ? 'പേര് നൽകൂ' : 'Enter Your name';
   const roleTitleText = isMl ? 'ഇതിൽ നിങ്ങൾ ആരാണ്?' : 'Choose your role';
@@ -177,7 +202,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
       </div>
 
       {/* Bottom Sheet Container */}
-      <div className={`account-bottom-sheet ${isInputFocused ? 'keyboard-open' : ''}`}>
+      <div className={`account-bottom-sheet ${isKeyboardOpen ? 'keyboard-open' : ''}`}>
         {step === 1 && (
           /* Sub-step 1: Phone Number */
           <div className="account-step-content account-fade-in">
@@ -199,6 +224,11 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
                 onChange={(e) => setPhone(e.target.value)}
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && isPhoneValid) {
+                    handleNext();
+                  }
+                }}
                 placeholder="Enter phone number"
                 maxLength={10}
               />
@@ -209,38 +239,57 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
         {step === 2 && (
           /* Sub-step 2: Verification */
           <div className="account-step-content account-fade-in">
-            <h2 className="account-verify-title">{verifyTitleText}</h2>
+            <h2 className={`account-verify-title ${otpPhase === 'merged' ? 'is-verified-title' : ''}`}>
+              {otpPhase === 'merged'
+                ? isMl
+                  ? 'നമ്പർ പരിശോധിച്ചു'
+                  : 'Verified successfully'
+                : verifyTitleText}
+            </h2>
 
-            {/* 4 OTP Digit Boxes */}
-            <div className="account-otp-row">
-              {otpDigits.map((digit, idx) => (
-                <div
-                  key={idx}
-                  className={`account-otp-box ${digit ? 'filled' : ''}`}
-                >
-                  {digit}
-                </div>
-              ))}
-            </div>
+            {/* OTP Container with smooth merging transition */}
+            <div className={`account-otp-container ${otpPhase}`}>
+              {/* 4 OTP Digit Boxes */}
+              <div className={`account-otp-row ${otpPhase}`}>
+                {otpDigits.map((digit, idx) => {
+                  const isDigitFilled = !!digit;
+                  const isNextToFill = !digit && (idx === 0 || !!otpDigits[idx - 1]);
+                  return (
+                    <div
+                      key={idx}
+                      className={`account-otp-box ${isDigitFilled ? 'filled' : ''} ${
+                        isNextToFill ? 'active-target' : ''
+                      }`}
+                    >
+                      {digit}
+                    </div>
+                  );
+                })}
+              </div>
 
-            {/* Verified Badge */}
-            <div className={`account-verified-badge ${isVerified ? 'show' : ''}`}>
-              <span className="account-verified-check">
+              {/* Combined Single Checkmark Box [ ✔ ] */}
+              <div className={`account-merged-check-box ${otpPhase === 'merged' ? 'show' : ''}`}>
                 <svg
-                  width="18"
-                  height="18"
+                  width="28"
+                  height="28"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#10B981"
-                  strokeWidth="3"
+                  stroke="#ffffff"
+                  strokeWidth="3.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-              </span>
-              <span className="account-verified-text">{verifiedBadgeText}</span>
+              </div>
             </div>
+
+            {otpPhase !== 'merged' && (
+              <p className="account-resend-text">
+                {isMl ? 'കോഡ് ലഭിച്ചില്ലേ? ' : "Didn't receive the code? "}
+                <span className="account-resend-link">{isMl ? 'വീണ്ടും അയക്കുക' : 'Resend'}</span>
+              </p>
+            )}
           </div>
         )}
 
@@ -282,7 +331,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
                     <div className={`account-role-card ${isSelected ? 'selected' : ''}`}>
                       <img
                         src={r.image}
-                        alt={r.label}
+                        alt={r.labelEn}
                         className="account-role-img"
                         draggable="false"
                       />
@@ -296,16 +345,29 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
         )}
 
         {/* Bottom Continue Button */}
-        <div className={`account-cta-wrap ${isInputFocused ? 'keyboard-open' : ''}`}>
-          <button
-            type="button"
-            className="account-continue-btn"
-            onClick={handleNext}
-            disabled={step === 4 && !selectedRole}
-          >
-            {ctaButtonText}
-          </button>
-        </div>
+        {shouldShowFloatingCta && step !== 2 && (
+          <div className={`account-cta-wrap ${isKeyboardOpen ? 'keyboard-open' : ''}`}>
+            <button
+              type="button"
+              className="account-continue-btn"
+              onClick={handleNext}
+              onMouseDown={(e) => {
+                e.preventDefault();
+              }}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                handleNext();
+              }}
+              disabled={
+                (step === 1 && !isPhoneValid) ||
+                (step === 3 && !isNameValid) ||
+                (step === 4 && !selectedRole)
+              }
+            >
+              {ctaButtonText}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
