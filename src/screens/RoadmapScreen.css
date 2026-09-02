@@ -129,6 +129,7 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding: 10px 45px 12px 45px;
+  margin-top: 12px;
   -webkit-overflow-scrolling: touch;
   flex-shrink: 0;
   animation: roadmapFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
@@ -153,13 +154,26 @@
   position: relative;
   scroll-snap-align: center;
   background: #f8fafc;
-  box-shadow:
-    0 10px 28px -4px rgba(0, 0, 0, 0.1),
-    0 4px 10px rgba(0, 0, 0, 0.04);
-  border: 2px solid #f59e0b;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  border: 1.5px solid #cbd5e1;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
+}
+
+.roadmap-card.is-selected-card {
+  border: 2.5px solid #f59e0b;
+  box-shadow: 0 12px 32px rgba(245, 158, 11, 0.28);
+  opacity: 1;
+  transform: scale(1.06);
+  z-index: 10;
+}
+
+.roadmap-card.is-unselected-card {
+  border: 1.5px solid #cbd5e1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  opacity: 0.5;
+  transform: scale(0.96);
 }
 
 .roadmap-card.is-unrevealed {
@@ -358,16 +372,19 @@
 }
 
 /* Bottom Action Area */
-.roadmap-bottom-bar {
-  padding: 6px 20px 14px 20px;
+.roadmap-footer {
+  padding: 8px 20px 16px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-top: auto;
   flex-shrink: 0;
   background: #ffffff;
   z-index: 20;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .roadmap-cta-btn {
@@ -409,8 +426,13 @@
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
-  padding: 2px 8px;
+  padding: 4px 8px;
   transition: color 0.2s ease;
+  background: transparent;
+  border: none;
+  text-align: center;
+  display: block;
+  margin: 0 auto;
 }
 
 .roadmap-skip-home-link:hover {
@@ -1268,6 +1290,7 @@
 .roadmap-flow3-vertical-card.is-unselected-card {
   border: 1.5px solid #cbd5e1;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  opacity: 0.5;
 }
 
 .roadmap-flow3-vertical-card.is-unrevealed {

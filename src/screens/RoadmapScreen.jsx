@@ -1,60 +1,60 @@
 import { useState, useRef, useEffect } from 'react';
 import './RoadmapScreen.css';
 
-const ROADMAP_STEPS = [
-  {
-    id: 1,
-    stepBadge: 'STEP 1 OF 4',
-    shortLabel: 'Health Check',
-    image: '/assets/images/onboarding/roadmap/1.png',
-    hasEmbeddedText: true,
-    title: 'Plant Health Check',
-    description: 'Check your crop for early problems',
-    cta: 'Start Health Check →',
-  },
-  {
-    id: 2,
-    stepBadge: 'STEP 2 OF 4',
-    shortLabel: 'Farming Help',
-    image: '/assets/images/onboarding/roadmap/5.png',
-    hasEmbeddedText: false,
-    title: 'Farming Help, Anytime',
-    description: 'Find the right answer for your farming problems.',
-    cta: 'Ask Farming Help →',
-  },
-  {
-    id: 3,
-    stepBadge: 'STEP 3 OF 4',
-    shortLabel: 'Weather Alerts',
-    image: '/assets/images/onboarding/roadmap/3.png',
-    hasEmbeddedText: false,
-    title: 'Weather Planning',
-    description: 'Plan farm work around the weather',
-    cta: 'Check Weather →',
-  },
-  {
-    id: 4,
-    stepBadge: 'STEP 4 OF 4',
-    shortLabel: 'Spray Schedule',
-    image: '/assets/images/onboarding/roadmap/4.png',
-    hasEmbeddedText: false,
-    title: 'Spraying Conditions',
-    description: 'Find the right time to spray',
-    cta: 'Check Spray Time →',
-  },
-];
-
 export default function RoadmapScreen({
   onBack,
   onStartScan,
   onOpenAiChat,
+  onOpenAddField,
   onGoHome,
   onPlanReadyForHome,
   skipGeneration = false,
   hideCard1 = false,
   isExitingToHome = false,
   activeFlow = 1,
+  language = 'en',
 }) {
+  const isMl = language === 'ml';
+
+  const stepsData = [
+    {
+      id: 1,
+      stepBadge: isMl ? 'ഘട്ടം 1 / 4' : 'STEP 1 OF 4',
+      shortLabel: isMl ? 'ആരോഗ്യ പരിശോധന' : 'Health Check',
+      image: '/assets/images/onboarding/roadmap/1.png',
+      title: isMl ? 'ചെടിയുടെ ആരോഗ്യ പരിശോധന' : 'Plant Health Check',
+      description: isMl ? 'വിളകളിലെ രോഗങ്ങൾ നേരത്തെ കണ്ടെത്താം' : 'Check your crop for early problems',
+      cta: isMl ? 'ആരോഗ്യ പരിശോധന ആരംഭിക്കാം →' : 'Start Health Check →',
+    },
+    {
+      id: 2,
+      stepBadge: isMl ? 'ഘട്ടം 2 / 4' : 'STEP 2 OF 4',
+      shortLabel: isMl ? 'കൃഷി സഹായം' : 'Farming Help',
+      image: '/assets/images/onboarding/roadmap/5.png',
+      title: isMl ? 'ഏതു സമയത്തും കൃഷി സഹായം' : 'Farming Help, Anytime',
+      description: isMl ? 'നിങ്ങളുടെ കൃഷി സംശയങ്ങൾക്ക് ഉത്തരം കണ്ടെത്താം.' : 'Find the right answer for your farming problems.',
+      cta: isMl ? 'ചോദിക്കാം →' : 'Ask Farming Help →',
+    },
+    {
+      id: 3,
+      stepBadge: isMl ? 'ഘട്ടം 3 / 4' : 'STEP 3 OF 4',
+      shortLabel: isMl ? 'കാലാവസ്ഥ' : 'Weather Alerts',
+      image: '/assets/images/onboarding/roadmap/3.png',
+      title: isMl ? 'കാലാവസ്ഥ ആസൂത്രണം' : 'Weather Planning',
+      description: isMl ? 'കാലാവസ്ഥയ്ക്കനുസരിച്ച് കൃഷി ജോലികൾ പ്ലാൻ ചെയ്യാം' : 'Plan farm work around the weather',
+      cta: isMl ? 'കാലാവസ്ഥ പരിശോധിക്കാം →' : 'Check Weather →',
+    },
+    {
+      id: 4,
+      stepBadge: isMl ? 'ഘട്ടം 4 / 4' : 'STEP 4 OF 4',
+      shortLabel: isMl ? 'സ്‌പ്രേ സമയം' : 'Spray Schedule',
+      image: '/assets/images/onboarding/roadmap/4.png',
+      title: isMl ? 'സ്‌പ്രേയിംഗ് സമയം' : 'Spraying Conditions',
+      description: isMl ? 'സ്‌പ്രേ ചെയ്യാൻ അനുയോജ്യമായ സമയം കണ്ടെത്താം' : 'Find the right time to spray',
+      cta: isMl ? 'സ്‌പ്രേ സമയം നോക്കാം →' : 'Check Spray Time →',
+    },
+  ];
+
   // Reveal state for each of the 4 cards: all true if skipGeneration is true
   const [revealedSteps, setRevealedSteps] = useState(
     skipGeneration ? [true, true, true, true] : [false, false, false, false]
@@ -65,6 +65,7 @@ export default function RoadmapScreen({
   const [selectedCardIndex, setSelectedCardIndex] = useState(0);
   const [toastMessage, setToastMessage] = useState(null);
   const [isPlanComplete, setIsPlanComplete] = useState(skipGeneration);
+  const [reloadKey, setReloadKey] = useState(0);
 
   // Card 1 is the primary focus card for Home transition
   const targetCardIndex = 0;
@@ -99,66 +100,40 @@ export default function RoadmapScreen({
     setSelectedCardIndex(idx);
   };
 
-  // Completion handler
-  const triggerPlanCompletionHold = (targetIdx = 0) => {
-    if (skipGeneration) return;
-    const tSettle = setTimeout(() => {
-      setIsPlanComplete(true);
-      setActiveIndex(targetIdx);
-      setSelectedCardIndex(targetIdx);
-
-      if (activeFlow === 3) {
-        // Flow 3: Smoothly scroll back to top of dedicated scroll container
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      } else if (activeFlow === 1) {
-        // Flow 1 auto-transitions smoothly to Home
-        const tHold = setTimeout(() => {
-          if (onPlanReadyForHome) {
-            const targetEl = cardRefs.current[targetIdx] || firstCardRef.current;
-            onPlanReadyForHome(targetEl, ROADMAP_STEPS[targetIdx], targetIdx);
-          }
-        }, 550);
-        timersRef.current.push(tHold);
-      }
-    }, 400);
-    timersRef.current.push(tSettle);
-  };
-
-  // Instant skip to final state if user taps during generation
   const fastForwardToComplete = () => {
     clearAllTimers();
     setRevealedSteps([true, true, true, true]);
     setGeneratingIndex(-1);
     setIsGenerating(false);
     setIsPlanComplete(true);
-    if (activeFlow === 3) {
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'instant' });
-      }
-    } else {
-      scrollToStep(0);
-      triggerPlanCompletionHold(0);
-    }
+    setSelectedCardIndex(0);
+    scrollToStep(0);
   };
 
-  const [reloadKey, setReloadKey] = useState(0);
-
-  const handleReloadScreen = () => {
+  // Re-trigger reveal sequence when Reload icon button is clicked
+  const handleReplayGeneration = () => {
     clearAllTimers();
     setRevealedSteps([false, false, false, false]);
     setGeneratingIndex(0);
     setIsGenerating(true);
     setIsPlanComplete(false);
-    setActiveIndex(0);
     setSelectedCardIndex(0);
+    setActiveIndex(0);
+    if (carouselRef.current) {
+      carouselRef.current.scrollTo({ left: 0, behavior: 'instant' });
+    }
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({ top: 0, behavior: 'instant' });
     }
-    setReloadKey((k) => k + 1);
+    setReloadKey((prev) => prev + 1);
   };
 
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
+
+  // Sequential lock-unlock reveal effect
   useEffect(() => {
     if (skipGeneration) return;
     clearAllTimers();
@@ -198,14 +173,12 @@ export default function RoadmapScreen({
         }
       }, 3700);
 
-      // Smoothly scroll back to top of the card container
       const t5 = setTimeout(() => {
         if (scrollContainerRef.current) {
           scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
         }
       }, 4700);
 
-      // After top scroll finishes: expand cards to 100% scale & reveal subtitle + CTAs
       const t6 = setTimeout(() => {
         setIsGenerating(false);
         setIsPlanComplete(true);
@@ -252,56 +225,65 @@ export default function RoadmapScreen({
       scrollToStep(0);
       setGeneratingIndex(-1);
       setIsGenerating(false);
-      triggerPlanCompletionHold(0);
+      setIsPlanComplete(true);
     }, 6500);
 
     timersRef.current = [t1, t2, t3, t4, t5, t6, t7, t8];
 
     return () => clearAllTimers();
-  }, [activeFlow, reloadKey]);
+  }, [activeFlow, reloadKey, skipGeneration]);
 
+  // Track active step on horizontal scroll
   const handleScroll = () => {
-    if (!carouselRef.current || isGenerating) return;
-    const { scrollLeft } = carouselRef.current;
+    if (!carouselRef.current) return;
     const firstCard = carouselRef.current.querySelector('.roadmap-card');
     const stepWidth = firstCard ? firstCard.offsetWidth + 16 : 266;
-    const index = Math.round(scrollLeft / stepWidth);
-    if (index >= 0 && index < ROADMAP_STEPS.length) {
-      setActiveIndex(index);
-      setSelectedCardIndex(index);
+    const newIdx = Math.round(carouselRef.current.scrollLeft / stepWidth);
+    if (newIdx !== activeIndex && newIdx >= 0 && newIdx < stepsData.length) {
+      setActiveIndex(newIdx);
+      setSelectedCardIndex(newIdx);
     }
   };
 
   const handleCtaClick = () => {
-    if (activeIndex === 0 && onStartScan) {
-      onStartScan();
-    } else if (activeIndex === 1 && onOpenAiChat) {
-      onOpenAiChat();
-    } else {
-      setToastMessage(`Selected: ${ROADMAP_STEPS[activeIndex]?.title}`);
-      setTimeout(() => setToastMessage(null), 2500);
+    if (isGenerating) {
+      fastForwardToComplete();
+      return;
+    }
+
+    const currentStep = stepsData[selectedCardIndex] || stepsData[0];
+
+    if (selectedCardIndex === 0) {
+      if (onStartScan) onStartScan();
+    } else if (selectedCardIndex === 1) {
+      if (onOpenAiChat) onOpenAiChat();
+    } else if (selectedCardIndex === 2) {
+      if (onOpenAddField) onOpenAddField('weather');
+    } else if (selectedCardIndex === 3) {
+      if (onOpenAddField) onOpenAddField('spray');
+    } else if (onPlanReadyForHome) {
+      onPlanReadyForHome(firstCardRef.current, currentStep, selectedCardIndex);
+    } else if (onGoHome) {
+      onGoHome();
     }
   };
 
-  const handleHomeClick = (e) => {
-    e.preventDefault();
-    if (onGoHome) onGoHome();
-  };
+  const currentSelectedStep = stepsData[selectedCardIndex] || stepsData[0];
 
   return (
     <div
       ref={screenContainerRef}
-      className={`roadmap-screen ${isExitingToHome ? 'is-exiting-to-home' : ''} ${
-        activeFlow === 3 ? 'is-flow3-vertical' : ''
+      className={`roadmap-screen flow-${activeFlow} ${
+        isExitingToHome ? 'is-exiting-home' : ''
       }`}
     >
-      {/* Top Bar with Back Arrow and Top-Right Reload Trigger */}
+      {/* Top Header Bar with Back Button & Reload Button */}
       <header className="roadmap-top-bar">
         <button
           type="button"
           className="roadmap-back-btn"
           onClick={onBack}
-          aria-label="Go back"
+          aria-label="Back"
         >
           <svg
             width="22"
@@ -317,15 +299,17 @@ export default function RoadmapScreen({
           </svg>
         </button>
 
+        {/* Reload Sequence Icon Button */}
         <button
           type="button"
           className="roadmap-reload-btn"
-          onClick={handleReloadScreen}
-          aria-label="Reload screen animation"
+          onClick={handleReplayGeneration}
+          aria-label="Replay Generation Sequence"
+          title="Replay Unlock Sequence"
         >
           <svg
-            width="18"
-            height="18"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="#00796B"
@@ -339,10 +323,14 @@ export default function RoadmapScreen({
         </button>
       </header>
 
-      {/* Header Section (Fixed at top for Flow 3) */}
+      {/* Header Section */}
       <section className="roadmap-header">
         <h1 className="roadmap-title">
-          Your path to healthier<br />crops is ready.
+          {isMl ? (
+            <>ആരോഗ്യമുള്ള വിളകളിലേക്കുള്ള<br />നിങ്ങളുടെ വഴി തയ്യാറാണ്.</>
+          ) : (
+            <>Your path to healthier<br />crops is ready.</>
+          )}
         </h1>
         {activeFlow === 3 && isGenerating && (
           <p className="roadmap-subtitle-preparing">
@@ -351,9 +339,19 @@ export default function RoadmapScreen({
         )}
         {activeFlow !== 3 && (
           <p className="roadmap-subtitle">
-            {"Let's take the "}
-            <span className="roadmap-highlight-step">first step</span>
-            {" together."}
+            {isMl ? (
+              <>
+                {"നമുക്ക് ആദ്യപടി "}
+                <span className="roadmap-highlight-step">ഒന്നിച്ച്</span>
+                {" തുടങ്ങാം."}
+              </>
+            ) : (
+              <>
+                {"Let's take the "}
+                <span className="roadmap-highlight-step">first step</span>
+                {" together."}
+              </>
+            )}
           </p>
         )}
       </section>
@@ -362,7 +360,7 @@ export default function RoadmapScreen({
         /* Flow 3: Dedicated Scroll Container for Vertical Step Cards */
         <div ref={scrollContainerRef} className="roadmap-flow3-scroll-container">
           <div className="roadmap-flow3-vertical-list">
-            {ROADMAP_STEPS.map((step, idx) => {
+            {stepsData.map((step, idx) => {
               const isRevealed = revealedSteps[idx];
               const isCurrentlyGenerating = isGenerating && generatingIndex === idx;
               const isSelected = idx === selectedCardIndex;
@@ -380,12 +378,12 @@ export default function RoadmapScreen({
                     <div className={`roadmap-flow3-circle ${isRevealed ? 'revealed' : ''}`}>
                       {step.id}
                     </div>
-                    {idx < ROADMAP_STEPS.length - 1 && (
+                    {idx < stepsData.length - 1 && (
                       <div className={`roadmap-flow3-line ${isRevealed ? 'revealed' : ''}`} />
                     )}
                   </div>
 
-                  {/* Right Full-Width Vertical Step Card (Yellow border for selected, light grey for others) */}
+                  {/* Right Full-Width Vertical Step Card */}
                   <div
                     ref={(el) => {
                       cardRefs.current[idx] = el;
@@ -403,6 +401,12 @@ export default function RoadmapScreen({
                       } else if (isPlanComplete || skipGeneration) {
                         if (idx === 0) {
                           if (onStartScan) onStartScan();
+                        } else if (idx === 1) {
+                          if (onOpenAiChat) onOpenAiChat();
+                        } else if (idx === 2) {
+                          if (onOpenAddField) onOpenAddField('weather');
+                        } else if (idx === 3) {
+                          if (onOpenAddField) onOpenAddField('spray');
                         } else if (onPlanReadyForHome) {
                           onPlanReadyForHome(firstCardRef.current, step, idx);
                         } else if (onGoHome) {
@@ -422,7 +426,7 @@ export default function RoadmapScreen({
                       {/* Step Badge Pill (Top-Right) */}
                       <div className="roadmap-flow3-badge">{step.stepBadge}</div>
 
-                      {/* Black Shade Overlay with Golden Padlock Unlocking Animation */}
+                      {/* Black Shade Overlay with Golden Padlock */}
                       <div
                         className={`roadmap-flow3-shade ${
                           isRevealed ? 'is-unlocked' : 'is-locked'
@@ -454,7 +458,7 @@ export default function RoadmapScreen({
                               </svg>
                             </div>
                             <span className="roadmap-flow3-unlock-label">
-                              {isCurrentlyGenerating ? 'Unlocking' : 'Locked'}
+                              {isCurrentlyGenerating ? (isMl ? 'തുറക്കുന്നു...' : 'Unlocking') : (isMl ? 'പൂട്ടിയിരിക്കുന്നു' : 'Locked')}
                             </span>
                           </div>
                         )}
@@ -464,7 +468,7 @@ export default function RoadmapScreen({
                       <div className="roadmap-flow3-card-overlay">
                         <h3 className="roadmap-flow3-card-title">{step.title}</h3>
 
-                        {/* Subtitle & Inside Card CTA Button (Revealed ONLY after full load & scroll top) */}
+                        {/* Subtitle & Inside Card CTA Button */}
                         {isPlanComplete && (
                           <div className="roadmap-flow3-card-details-fade-in">
                             <p className="roadmap-flow3-card-desc">{step.description}</p>
@@ -475,6 +479,12 @@ export default function RoadmapScreen({
                                 e.stopPropagation();
                                 if (idx === 0) {
                                   if (onStartScan) onStartScan();
+                                } else if (idx === 1) {
+                                  if (onOpenAiChat) onOpenAiChat();
+                                } else if (idx === 2) {
+                                  if (onOpenAddField) onOpenAddField('weather');
+                                } else if (idx === 3) {
+                                  if (onOpenAddField) onOpenAddField('spray');
                                 } else if (onPlanReadyForHome) {
                                   onPlanReadyForHome(firstCardRef.current, step, idx);
                                 } else if (onGoHome) {
@@ -501,11 +511,11 @@ export default function RoadmapScreen({
           ref={carouselRef}
           onScroll={handleScroll}
         >
-          {ROADMAP_STEPS.map((step, idx) => {
+          {stepsData.map((step, idx) => {
             const isRevealed = revealedSteps[idx];
             const isCurrentlyGenerating = isGenerating && generatingIndex === idx;
             const isActive = idx === activeIndex;
-            const isSelected = idx === selectedCardIndex;
+            const isSelected = idx === activeIndex || idx === selectedCardIndex;
 
             return (
               <div
@@ -540,6 +550,10 @@ export default function RoadmapScreen({
                       if (onStartScan) onStartScan();
                     } else if (idx === 1) {
                       if (onOpenAiChat) onOpenAiChat();
+                    } else if (idx === 2) {
+                      if (onOpenAddField) onOpenAddField('weather');
+                    } else if (idx === 3) {
+                      if (onOpenAddField) onOpenAddField('spray');
                     } else {
                       scrollToStep(idx);
                     }
@@ -582,18 +596,16 @@ export default function RoadmapScreen({
                           </svg>
                         </div>
                         <span className="roadmap-flow2-unlock-label">
-                          {isCurrentlyGenerating ? 'Unlocking' : 'Locked'}
+                          {isCurrentlyGenerating ? (isMl ? 'തുറക്കുന്നു...' : 'Unlocking') : (isMl ? 'പൂട്ടിയിരിക്കുന്നു' : 'Locked')}
                         </span>
                       </div>
                     )}
                   </div>
 
-                  {!step.hasEmbeddedText && (
-                    <div className="roadmap-card-text-overlay">
-                      <h3 className="roadmap-card-title">{step.title}</h3>
-                      <p className="roadmap-card-desc">{step.description}</p>
-                    </div>
-                  )}
+                  <div className="roadmap-card-text-overlay">
+                    <h3 className="roadmap-card-title">{step.title}</h3>
+                    <p className="roadmap-card-desc">{step.description}</p>
+                  </div>
                 </div>
               </div>
             );
@@ -604,7 +616,7 @@ export default function RoadmapScreen({
       {/* Carousel Dots Indicator (Flows 1 & 2 only) */}
       {activeFlow !== 3 && (
         <div className="roadmap-dots-indicator">
-          {ROADMAP_STEPS.map((_, idx) => {
+          {stepsData.map((_, idx) => {
             const isRevealed = revealedSteps[idx];
             const isActive = idx === activeIndex;
             return (
@@ -628,84 +640,34 @@ export default function RoadmapScreen({
         </div>
       )}
 
-      {/* Flow 3 Sticky Footer (Shown once plan is complete / after full load & scroll top) */}
-      {activeFlow === 3 && (isPlanComplete || skipGeneration) && (
-        <footer className="roadmap-flow3-footer">
-          <button
-            type="button"
-            className="roadmap-flow3-secondary-link"
-            onClick={() => {
-              if (onPlanReadyForHome) {
-                onPlanReadyForHome(firstCardRef.current, ROADMAP_STEPS[0], 0);
-              } else if (onGoHome) {
-                onGoHome();
-              }
-            }}
-          >
-            Later, Explore LIVO
-          </button>
-        </footer>
-      )}
+      {/* Bottom Sticky Action Footer */}
+      <footer className="roadmap-footer">
+        <button
+          type="button"
+          className={`roadmap-cta-btn ${isGenerating ? 'cta-generating' : ''}`}
+          onClick={handleCtaClick}
+        >
+          {isGenerating ? (
+            <span>{isMl ? 'പ്ലാൻ തയ്യാറാകുന്നു...' : 'Generating Your Farming Plan...'}</span>
+          ) : (
+            currentSelectedStep.cta
+          )}
+        </button>
 
-      {/* Flow 2 Bottom Action Area */}
-      {activeFlow === 2 && isPlanComplete && !skipGeneration && (
-        <footer className="roadmap-flow2-footer">
-          <button
-            type="button"
-            className="roadmap-flow2-primary-btn"
-            onClick={() => {
-              if (activeIndex === 0) {
-                if (onStartScan) onStartScan();
-              } else {
-                setToastMessage(`Action for: ${ROADMAP_STEPS[activeIndex]?.title}`);
-                setTimeout(() => setToastMessage(null), 2000);
-              }
-            }}
-          >
-            {ROADMAP_STEPS[activeIndex]?.cta || 'Start Health Scan →'}
-          </button>
+        {/* Secondary Navigation Link to Home Screen */}
+        <button
+          type="button"
+          className="roadmap-skip-home-link"
+          onClick={() => {
+            if (onGoHome) onGoHome();
+          }}
+        >
+          {isMl ? 'പിന്നീട്, ഹോമിലേക്ക് പോകാം' : 'Later, Go to Home'}
+        </button>
+      </footer>
 
-          <button
-            type="button"
-            className="roadmap-flow2-close-link"
-            onClick={() => {
-              if (onPlanReadyForHome) {
-                onPlanReadyForHome(firstCardRef.current, ROADMAP_STEPS[0], 0);
-              }
-            }}
-          >
-            Later, Go to Home
-          </button>
-        </footer>
-      )}
-
-      {/* Bottom Action Area - Only shown when viewing plan from Home */}
-      {skipGeneration && activeFlow !== 3 && (
-        <footer className="roadmap-bottom-bar">
-          <button
-            type="button"
-            className="roadmap-cta-btn"
-            onClick={handleCtaClick}
-          >
-            {ROADMAP_STEPS[activeIndex]?.cta || 'Start Health Scan →'}
-          </button>
-
-          <a
-            href="#home"
-            className="roadmap-skip-home-link"
-            onClick={handleHomeClick}
-          >
-            Back to Home
-          </a>
-        </footer>
-      )}
-
-      {/* Toast Feedback */}
-      {toastMessage && (
-        <div className="roadmap-toast">
-          {toastMessage}
-        </div>
-      )}
+      {/* Floating Notification Toast */}
+      {toastMessage && <div className="roadmap-toast">{toastMessage}</div>}
     </div>
   );
 }

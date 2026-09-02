@@ -31,13 +31,16 @@ const PICK_FOR_YOU_CARDS = [
 export default function HomeScreen({
   onActionClick,
   onOpenAiChat,
+  onOpenAddField,
   onViewAllPlan,
   isTransitioningFromPlan = false,
   hideCard1 = false,
   hideAllCards = false,
   firstCardRef = null,
   _activeFlow = 1,
+  language = 'en',
 }) {
+  const isMl = language === 'ml';
   const [activeTab, setActiveTab] = useState('home');
   const [toastMessage, setToastMessage] = useState(null);
   const carouselRef = useRef(null);
@@ -214,9 +217,41 @@ export default function HomeScreen({
                 </svg>
               </div>
               <span className="home-action-label">
-                AI<br />History
+                {isMl ? <>AI<br />ചരിത്രം</> : <>AI<br />History</>}
               </span>
             </button>
+          </section>
+
+          {/* LIVO Guidance Re-engagement Card */}
+          <section className="home-guidance-section">
+            <div className="home-guidance-card">
+              <div className="home-guidance-img-wrap">
+                <img
+                  src="/assets/images/guidence_card.png"
+                  alt="Find the right way to grow"
+                  className="home-guidance-img"
+                  draggable="false"
+                />
+              </div>
+
+              <div className="home-guidance-body">
+                <h3 className="home-guidance-title">
+                  {isMl ? 'മികച്ച കൃഷിരീതി കണ്ടെത്താം' : 'Find the right way to grow'}
+                </h3>
+                <p className="home-guidance-desc">
+                  {isMl
+                    ? 'മികച്ച വിളവെടുപ്പിനായി വ്യക്തിഗത വഴികാട്ടി നേടൂ.'
+                    : 'Get personalized guidance for a better season.'}
+                </p>
+                <button
+                  type="button"
+                  className="home-guidance-btn"
+                  onClick={handleViewAll}
+                >
+                  {isMl ? 'LIVO ഗൈഡൻസ് നേടാം' : 'Get LIVO Guidance'}
+                </button>
+              </div>
+            </div>
           </section>
 
           {/* "Pick For You" Section Header */}
@@ -248,8 +283,14 @@ export default function HomeScreen({
                       : undefined
                   }
                   onClick={() => {
-                    if (idx === 1 && onOpenAiChat) {
+                    if (idx === 0 && onActionClick) {
+                      onActionClick('health-check');
+                    } else if (idx === 1 && onOpenAiChat) {
                       onOpenAiChat();
+                    } else if (idx === 2 && onOpenAddField) {
+                      onOpenAddField('weather');
+                    } else if (idx === 3 && onOpenAddField) {
+                      onOpenAddField('spray');
                     } else {
                       handleViewAll();
                     }

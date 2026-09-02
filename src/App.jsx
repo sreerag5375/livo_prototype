@@ -16,6 +16,10 @@ import CameraConfirmScreen from './screens/CameraConfirmScreen';
 import ScanResultScreen from './screens/ScanResultScreen';
 import TreatmentPlanScreen from './screens/TreatmentPlanScreen';
 import AiChatScreen from './screens/AiChatScreen';
+import AddFieldScreen from './screens/AddFieldScreen';
+import MapPinpointScreen from './screens/MapPinpointScreen';
+import WeatherPlanningScreen from './screens/WeatherPlanningScreen';
+import SprayingConditionsScreen from './screens/SprayingConditionsScreen';
 import SharedCardTransition from './components/SharedCardTransition';
 import RowCardsTransition from './components/RowCardsTransition';
 
@@ -27,6 +31,28 @@ export default function App() {
   const [roadmapSource, setRoadmapSource] = useState('goals');
   const [sharedTransition, setSharedTransition] = useState(null);
   const [rowTransition, setRowTransition] = useState(null);
+  const [fieldData, setFieldData] = useState(null);
+  const [targetFeature, setTargetFeature] = useState('weather');
+
+  const handleFeatureBackToRoadmap = () => {
+    setRoadmapSource('home');
+    setCurrentScreen(roadmapSource === 'home' ? 'home' : 'roadmap');
+  };
+
+  const handleOpenAddField = (feature = 'weather') => {
+    setTargetFeature(feature);
+    setCurrentScreen('add-field');
+  };
+
+  const handleAddFieldComplete = (data) => {
+    setFieldData(data);
+    setCurrentScreen('map-pinpoint');
+  };
+
+  const handleMapConfirm = (fullFieldData) => {
+    setFieldData(fullFieldData);
+    setCurrentScreen(fullFieldData.targetFeature === 'weather' ? 'weather-planning' : 'spraying-conditions');
+  };
 
   const containerRef = useRef(null);
   const homeCardRef = useRef(null);
@@ -521,12 +547,14 @@ export default function App() {
               onBack={handleRoadmapBack}
               onStartScan={goToCameraScan}
               onOpenAiChat={() => setCurrentScreen('ai-chat')}
+              onOpenAddField={handleOpenAddField}
               onGoHome={goToHome}
               onPlanReadyForHome={startSharedTransitionToHome}
               skipGeneration={roadmapSource === 'home'}
               hideCard1={sharedTransition !== null}
               isExitingToHome={sharedTransition !== null || rowTransition !== null}
               activeFlow={activeFlow}
+              language={language}
             />
           </div>
         )}
@@ -555,7 +583,7 @@ export default function App() {
         {currentScreen === 'scan-result' && (
           <div className="screen-layer">
             <ScanResultScreen
-              onBack={goToCameraScan}
+              onBack={handleFeatureBackToRoadmap}
               onViewTreatment={goToTreatmentPlan}
             />
           </div>
@@ -576,7 +604,52 @@ export default function App() {
         {currentScreen === 'ai-chat' && (
           <div className="screen-layer">
             <AiChatScreen
-              onBack={() => setCurrentScreen(roadmapSource === 'home' ? 'home' : 'roadmap')}
+              onBack={handleFeatureBackToRoadmap}
+              language={language}
+            />
+          </div>
+        )}
+
+        {/* Add Field Form Screen */}
+        {currentScreen === 'add-field' && (
+          <div className="screen-layer">
+            <AddFieldScreen
+              onBack={handleFeatureBackToRoadmap}
+              onComplete={handleAddFieldComplete}
+              targetFeature={targetFeature}
+              language={language}
+            />
+          </div>
+        )}
+
+        {/* Map Pinpoint Screen */}
+        {currentScreen === 'map-pinpoint' && (
+          <div className="screen-layer">
+            <MapPinpointScreen
+              fieldData={fieldData}
+              onBack={() => setCurrentScreen('add-field')}
+              onConfirm={handleMapConfirm}
+              language={language}
+            />
+          </div>
+        )}
+
+        {/* Weather Planning Screen */}
+        {currentScreen === 'weather-planning' && (
+          <div className="screen-layer">
+            <WeatherPlanningScreen
+              fieldData={fieldData}
+              onBack={handleFeatureBackToRoadmap}
+              language={language}
+            />
+          </div>
+        )}
+
+        {/* Spraying Conditions Screen */}
+        {currentScreen === 'spraying-conditions' && (
+          <div className="screen-layer">
+            <SprayingConditionsScreen
+              onBack={handleFeatureBackToRoadmap}
               language={language}
             />
           </div>
@@ -620,8 +693,10 @@ export default function App() {
                 }
               }}
               onOpenAiChat={() => setCurrentScreen('ai-chat')}
+              onOpenAddField={handleOpenAddField}
               onViewAllPlan={openFarmingPlanFromHome}
               _activeFlow={activeFlow}
+              language={language}
             />
           </div>
         )}

@@ -1,0 +1,284 @@
+.spraying-screen {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header Bar */
+.spraying-header {
+  padding: 30px 20px 4px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg, #cdeefb 0%, #e2f6fd 100%);
+  z-index: 10;
+}
+
+.spraying-back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease;
+}
+
+.spraying-back-btn:active {
+  transform: scale(0.9);
+}
+
+.spraying-header-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #00796B;
+  margin: 0;
+}
+
+/* Top Hero Graphic Banner */
+.spraying-hero-wrap {
+  width: 100%;
+  background: #e2f6fd;
+  display: flex;
+  justify-content: center;
+  margin-bottom: -18px;
+}
+
+.spraying-hero-img {
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* Status Legend Pill Card */
+.spraying-legend-card {
+  margin: 0 16px 24px 16px;
+  padding: 16px 12px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  z-index: 10;
+  position: relative;
+}
+
+.spraying-legend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spraying-legend-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.spraying-legend-icon.good {
+  background: #10b981;
+}
+
+.spraying-legend-icon.caution {
+  background: #f59e0b;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.spraying-legend-icon.avoid {
+  background: #ef4444;
+}
+
+.spraying-legend-name {
+  font-size: 14.5px;
+  font-weight: 800;
+}
+
+.spraying-legend-name.good {
+  color: #10b981;
+}
+
+.spraying-legend-name.caution {
+  color: #f59e0b;
+}
+
+.spraying-legend-name.avoid {
+  color: #ef4444;
+}
+
+.spraying-legend-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748b;
+  margin-top: 2px;
+  text-align: center;
+}
+
+/* Recommended Spray Windows Section */
+.spraying-windows-sec {
+  padding-bottom: 36px;
+}
+
+.spraying-sec-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 18px 20px;
+}
+
+/* Timeline Container */
+.spraying-timeline {
+  position: relative;
+  padding-left: 48px;
+  padding-right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.spraying-timeline::before {
+  content: '';
+  position: absolute;
+  left: 27px;
+  top: 14px;
+  bottom: 24px;
+  width: 2px;
+  background: #e2e8f0;
+  z-index: 1;
+}
+
+.spraying-timeline-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Timeline Status Badge */
+.spraying-timeline-badge {
+  position: absolute;
+  left: -33px;
+  top: 14px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 0 0 0 3px #ffffff;
+}
+
+.spraying-timeline-badge.good {
+  background: #10b981;
+}
+
+.spraying-timeline-badge.caution {
+  background: #f59e0b;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 13.5px;
+}
+
+.spraying-timeline-badge.avoid {
+  background: #ef4444;
+}
+
+/* Window Cards */
+.spraying-window-card {
+  flex: 1;
+  border-radius: 20px;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spraying-window-card.avoid {
+  background: #fff0f2;
+  border: 1px solid #fecdd3;
+}
+
+.spraying-window-card.caution {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+}
+
+.spraying-window-card.good {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.spraying-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.spraying-time-text {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.spraying-status-text {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.spraying-status-text.avoid {
+  color: #ef4444;
+}
+
+.spraying-status-text.caution {
+  color: #d97706;
+}
+
+.spraying-status-text.good {
+  color: #10b981;
+}
+
+.spraying-card-divider {
+  height: 1px;
+  width: 100%;
+}
+
+.spraying-window-card.avoid .spraying-card-divider {
+  background: #fecdd3;
+}
+
+.spraying-window-card.caution .spraying-card-divider {
+  background: #fde68a;
+}
+
+.spraying-window-card.good .spraying-card-divider {
+  background: #a7f3d0;
+}
+
+.spraying-card-desc {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #334155;
+  line-height: 1.4;
+  margin: 0;
+}

@@ -127,22 +127,16 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
     setSelectedRole(roleId);
   };
 
-  const handleHeaderBack = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    } else if (onBackToIntro) {
-      onBackToIntro();
-    }
-  };
-
   const speechText = isMl
-    ? step === 2
-      ? 'ഇനി നിങ്ങളുടെ നമ്പർ ഒന്ന് പരിശോധിക്കാം.'
-      : step === 3
-      ? 'ഞാൻ നിങ്ങളെ എന്താണ് വിളിക്കേണ്ടത്?'
+    ? step === 1
+      ? 'ആദ്യം നിങ്ങളുടെ നമ്പർ നൽകാം.'
+      : step === 2 || step === 3
+      ? 'നന്ദി! ഇനി മുന്നോട്ട് പോകാം.'
       : step === 4
-      ? 'നിങ്ങളെ ഏറ്റവും നന്നായി വിവരിക്കുന്നത് ഏതാണ്?'
-      : 'ആദ്യം നിങ്ങളുടെ നമ്പർ നൽകാം.'
+      ? 'ഇതിൽ നിങ്ങളെ പ്രതിനിധീകരിക്കുന്നത് ഏതാണ്?'
+      : 'ആദ്യം ബന്ധപ്പെടാം.'
+    : step === 1
+    ? 'Enter your mobile number to get started.'
     : step === 2 || step === 3
     ? "Perfect! Let's keep going."
     : step === 4
@@ -150,11 +144,19 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
     : "Let's get connected first.";
 
   const phoneTitleText = isMl ? 'നിങ്ങളുടെ നമ്പർ നൽകൂ' : 'Enter your number';
-  const verifyTitleText = isMl ? "Let's verify your number" : "Let's verify your number";
+  const verifyTitleText = isMl ? 'നമ്പർ പരിശോധിക്കാം' : "Let's verify your number";
   const nameTitleText = isMl ? 'നിങ്ങളുടെ പേര് പറയൂ' : 'Tell us your name';
   const namePlaceholderText = isMl ? 'പേര് നൽകൂ' : 'Enter Your name';
   const roleTitleText = isMl ? 'ഇതിൽ നിങ്ങൾ ആരാണ്?' : 'Choose your role';
   const ctaButtonText = isMl ? 'തുടരാം' : 'Continue';
+
+  const handleHeaderBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    } else if (onBackToIntro) {
+      onBackToIntro();
+    }
+  };
 
   return (
     <div className="account-screen">
@@ -179,7 +181,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
-        <h1 className="account-header-title">Create Account</h1>
+        <h1 className="account-header-title">{isMl ? 'അക്കൗണ്ട് ഉണ്ടാക്കാം' : 'Create Account'}</h1>
       </header>
 
       {/* Hero Section: Video Animation + Dynamic Speech Bubble */}

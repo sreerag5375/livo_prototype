@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import './AiChatScreen.css';
 
-const SUGGESTION_PILLS = [
-  { id: 1, text: "Today's activities" },
-  { id: 2, text: 'How is my crop doing?' },
-  { id: 3, text: "What's the weather today?" },
-];
-
 export default function AiChatScreen({ onBack, language = 'en' }) {
   const [inputText, setInputText] = useState('');
 
   const isMl = language === 'ml';
 
-  const handlePillClick = (text) => {
-    setInputText(text);
+  const suggestionPills = [
+    { id: 1, textEn: "Today's activities", textMl: 'ഇന്നത്തെ കൃഷി ജോലികൾ' },
+    { id: 2, textEn: 'How is my crop doing?', textMl: 'എന്റെ വിളയുടെ അവസ്ഥ എങ്ങനെ?' },
+    { id: 3, textEn: "What's the weather today?", textMl: 'ഇന്നത്തെ കാലാവസ്ഥ എന്താണ്?' },
+  ];
+
+  const handlePillClick = (pill) => {
+    setInputText(isMl ? pill.textMl : pill.textEn);
   };
 
   return (
@@ -78,14 +78,16 @@ export default function AiChatScreen({ onBack, language = 'en' }) {
 
         {/* Overlay Suggestion Speech Bubbles */}
         <div className="ai-chat-pills-overlay">
-          {SUGGESTION_PILLS.map((pill) => (
+          {suggestionPills.map((pill) => (
             <button
               key={pill.id}
               type="button"
               className="ai-chat-pill-btn"
-              onClick={() => handlePillClick(pill.text)}
+              onClick={() => handlePillClick(pill)}
             >
-              <span className="ai-chat-pill-text">{pill.text}</span>
+              <span className="ai-chat-pill-text">
+                {isMl ? pill.textMl : pill.textEn}
+              </span>
               <svg
                 width="16"
                 height="16"

@@ -213,7 +213,7 @@
 }
 
 .account-verify-title.is-verified-title {
-  color: #047857;
+  color: #00AA5E;
 }
 
 .account-otp-container {
@@ -265,24 +265,24 @@
 }
 
 .account-otp-box.active-target {
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  border-color: #00AA5E;
+  box-shadow: 0 0 0 3px rgba(0, 170, 94, 0.2);
 }
 
 .account-otp-box.filled {
-  border-color: #10b981;
-  background: #ecfdf5;
-  color: #047857;
+  border-color: #00AA5E;
+  background: #E6F7F0;
+  color: #00AA5E;
   transform: scale(1.04);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.22);
+  box-shadow: 0 4px 14px rgba(0, 170, 94, 0.22);
   animation: otpPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .account-otp-row.merging .account-otp-box {
-  border-color: #10b981;
-  background: #10b981;
+  border-color: #00AA5E;
+  background: #00AA5E;
   color: #ffffff;
-  box-shadow: 0 0 22px rgba(16, 185, 129, 0.55);
+  box-shadow: 0 0 22px rgba(0, 170, 94, 0.55);
 }
 
 @keyframes otpPop {
@@ -302,11 +302,11 @@
   width: 60px;
   height: 60px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #00AA5E 0%, #00884B 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 170, 94, 0.45);
   opacity: 0;
   transform: scale(0.2);
   transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.35s ease;
