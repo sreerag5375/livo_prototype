@@ -10,8 +10,8 @@ const PICK_FOR_YOU_CARDS = [
   },
   {
     id: 2,
-    title: 'Crop Planning',
-    description: 'Personalized crop advisory suited to your farm soil.',
+    title: 'Farming Help, Anytime',
+    description: 'Find the right answer for your farming problems.',
     image: '/assets/images/onboarding/roadmap/5.png',
   },
   {
@@ -30,6 +30,7 @@ const PICK_FOR_YOU_CARDS = [
 
 export default function HomeScreen({
   onActionClick,
+  onOpenAiChat,
   onViewAllPlan,
   isTransitioningFromPlan = false,
   hideCard1 = false,
@@ -62,15 +63,22 @@ export default function HomeScreen({
   };
 
   const handleQuickAction = (name) => {
+    if (name === 'Ask LIVO' && onOpenAiChat) {
+      onOpenAiChat();
+      return;
+    }
     if (onActionClick) {
       onActionClick(name);
     }
     showToast(`Opening ${name}...`);
   };
 
-
   const handleTalkToLivo = () => {
-    showToast('Connecting with LIVO Farming Assistant…');
+    if (onOpenAiChat) {
+      onOpenAiChat();
+    } else {
+      showToast('Connecting with LIVO Farming Assistant…');
+    }
   };
 
   return (
@@ -239,7 +247,13 @@ export default function HomeScreen({
                       ? { visibility: 'hidden' }
                       : undefined
                   }
-                  onClick={handleViewAll}
+                  onClick={() => {
+                    if (idx === 1 && onOpenAiChat) {
+                      onOpenAiChat();
+                    } else {
+                      handleViewAll();
+                    }
+                  }}
                 >
                   <img
                     src={card.image}

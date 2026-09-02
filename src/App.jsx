@@ -15,6 +15,7 @@ import CameraScanScreen from './screens/CameraScanScreen';
 import CameraConfirmScreen from './screens/CameraConfirmScreen';
 import ScanResultScreen from './screens/ScanResultScreen';
 import TreatmentPlanScreen from './screens/TreatmentPlanScreen';
+import AiChatScreen from './screens/AiChatScreen';
 import SharedCardTransition from './components/SharedCardTransition';
 import RowCardsTransition from './components/RowCardsTransition';
 
@@ -248,8 +249,8 @@ export default function App() {
         },
         {
           id: 2,
-          title: 'Crop Recommendation',
-          description: 'Get the right action for your crop',
+          title: 'Farming Help, Anytime',
+          description: 'Find the right answer for your farming problems.',
           image: '/assets/images/onboarding/roadmap/5.png',
         },
         {
@@ -306,7 +307,7 @@ export default function App() {
   return (
     <MobileFrame
       bottomBg={['onboarding', 'account-creation', 'language', 'livo-intro'].includes(currentScreen) ? '#ffffff' : '#4a2508'}
-      overlayStatusBar={['onboarding', 'camera-scan', 'camera-confirm'].includes(currentScreen)}
+      overlayStatusBar={['onboarding', 'camera-scan', 'camera-confirm', 'ai-chat'].includes(currentScreen)}
     >
       <div className="app-screen-container" ref={containerRef}>
         {/* Start Screen: Choose Onboarding Flow */}
@@ -519,6 +520,7 @@ export default function App() {
             <RoadmapScreen
               onBack={handleRoadmapBack}
               onStartScan={goToCameraScan}
+              onOpenAiChat={() => setCurrentScreen('ai-chat')}
               onGoHome={goToHome}
               onPlanReadyForHome={startSharedTransitionToHome}
               skipGeneration={roadmapSource === 'home'}
@@ -570,6 +572,16 @@ export default function App() {
           </div>
         )}
 
+        {/* LIVO AI Assistant Chat Screen */}
+        {currentScreen === 'ai-chat' && (
+          <div className="screen-layer">
+            <AiChatScreen
+              onBack={() => setCurrentScreen(roadmapSource === 'home' ? 'home' : 'roadmap')}
+              language={language}
+            />
+          </div>
+        )}
+
         {/* App Home Screen */}
         {(currentScreen === 'home' ||
           currentScreen === 'roadmap' ||
@@ -607,6 +619,7 @@ export default function App() {
                   goToCameraScan();
                 }
               }}
+              onOpenAiChat={() => setCurrentScreen('ai-chat')}
               onViewAllPlan={openFarmingPlanFromHome}
               _activeFlow={activeFlow}
             />

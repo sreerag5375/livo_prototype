@@ -15,12 +15,12 @@ const ROADMAP_STEPS = [
   {
     id: 2,
     stepBadge: 'STEP 2 OF 4',
-    shortLabel: 'Crop Plan',
+    shortLabel: 'Farming Help',
     image: '/assets/images/onboarding/roadmap/5.png',
     hasEmbeddedText: false,
-    title: 'Crop Recommendation',
-    description: 'Get the right action for your crop',
-    cta: 'Get Recommendation →',
+    title: 'Farming Help, Anytime',
+    description: 'Find the right answer for your farming problems.',
+    cta: 'Ask Farming Help →',
   },
   {
     id: 3,
@@ -47,6 +47,7 @@ const ROADMAP_STEPS = [
 export default function RoadmapScreen({
   onBack,
   onStartScan,
+  onOpenAiChat,
   onGoHome,
   onPlanReadyForHome,
   skipGeneration = false,
@@ -272,8 +273,14 @@ export default function RoadmapScreen({
   };
 
   const handleCtaClick = () => {
-    setToastMessage(`Selected: ${ROADMAP_STEPS[activeIndex]?.title}`);
-    setTimeout(() => setToastMessage(null), 2500);
+    if (activeIndex === 0 && onStartScan) {
+      onStartScan();
+    } else if (activeIndex === 1 && onOpenAiChat) {
+      onOpenAiChat();
+    } else {
+      setToastMessage(`Selected: ${ROADMAP_STEPS[activeIndex]?.title}`);
+      setTimeout(() => setToastMessage(null), 2500);
+    }
   };
 
   const handleHomeClick = (e) => {
@@ -531,6 +538,8 @@ export default function RoadmapScreen({
                   } else if (isPlanComplete || skipGeneration) {
                     if (idx === 0) {
                       if (onStartScan) onStartScan();
+                    } else if (idx === 1) {
+                      if (onOpenAiChat) onOpenAiChat();
                     } else {
                       scrollToStep(idx);
                     }
