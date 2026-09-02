@@ -24,7 +24,7 @@ export default function RoadmapScreen({
       image: '/assets/images/onboarding/roadmap/1.png',
       title: isMl ? 'ചെടിയുടെ ആരോഗ്യ പരിശോധന' : 'Plant Health Check',
       description: isMl ? 'വിളകളിലെ രോഗങ്ങൾ നേരത്തെ കണ്ടെത്താം' : 'Check your crop for early problems',
-      cta: isMl ? 'ആരോഗ്യ പരിശോധന ആരംഭിക്കാം →' : 'Start Health Check →',
+      cta: isMl ? 'ചെടിയുടെ ആരോഗ്യം അറിയാം →' : 'Start Health Check →',
     },
     {
       id: 2,
