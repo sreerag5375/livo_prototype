@@ -21,7 +21,7 @@
 
 /* Header */
 .language-header {
-  padding: 70px 20px 4px 20px;
+  padding: 48px 20px 4px 20px;
   text-align: center;
   animation: langFadeDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
 }

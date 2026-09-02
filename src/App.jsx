@@ -305,7 +305,7 @@ export default function App() {
 
   return (
     <MobileFrame
-      bottomBg={currentScreen === 'onboarding' ? '#FFFFFF' : '#4a2508'}
+      bottomBg={['onboarding', 'account-creation', 'language', 'livo-intro'].includes(currentScreen) ? '#ffffff' : '#4a2508'}
       overlayStatusBar={['onboarding', 'camera-scan', 'camera-confirm'].includes(currentScreen)}
     >
       <div className="app-screen-container" ref={containerRef}>
