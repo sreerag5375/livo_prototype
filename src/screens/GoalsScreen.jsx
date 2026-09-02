@@ -29,23 +29,21 @@ const GOALS = [
 ];
 
 export default function GoalsScreen({ onBack, onContinue, language = 'en' }) {
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
   const isMl = language === 'ml';
 
-  const toggleGoal = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+  const selectGoal = (id) => {
+    setSelectedId(id);
   };
 
   const handleContinue = () => {
-    if (selectedIds.length === 0) return;
+    if (!selectedId) return;
     if (onContinue) {
-      onContinue(selectedIds);
+      onContinue(selectedId);
     } else {
-      showToast(`Selected ${selectedIds.length} goal(s)! Plan generated.`);
+      showToast(`Selected goal: ${selectedId}! Plan generated.`);
     }
   };
 
@@ -147,13 +145,13 @@ export default function GoalsScreen({ onBack, onContinue, language = 'en' }) {
         {/* 2x2 Goals Grid */}
         <section className="goals-grid">
           {GOALS.map((goal) => {
-            const isSelected = selectedIds.includes(goal.id);
+            const isSelected = selectedId === goal.id;
             const labelText = isMl ? goal.titleMl : goal.titleEn;
             return (
               <div
                 key={goal.id}
                 className="goal-item"
-                onClick={() => toggleGoal(goal.id)}
+                onClick={() => selectGoal(goal.id)}
               >
                 <div className={`goal-card ${isSelected ? 'selected' : ''}`}>
                   {/* Radio Indicator */}
@@ -197,7 +195,7 @@ export default function GoalsScreen({ onBack, onContinue, language = 'en' }) {
           type="button"
           className="goals-continue-btn"
           onClick={handleContinue}
-          disabled={selectedIds.length === 0}
+          disabled={!selectedId}
         >
           {ctaButtonText}
         </button>

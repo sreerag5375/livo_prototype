@@ -39,6 +39,7 @@ export default function HomeScreen({
   firstCardRef = null,
   _activeFlow = 1,
   language = 'en',
+  showGuidanceCard = false,
 }) {
   const isMl = language === 'ml';
   const [activeTab, setActiveTab] = useState('home');
@@ -222,37 +223,39 @@ export default function HomeScreen({
             </button>
           </section>
 
-          {/* LIVO Guidance Re-engagement Card */}
-          <section className="home-guidance-section">
-            <div className="home-guidance-card">
-              <div className="home-guidance-img-wrap">
-                <img
-                  src="/assets/images/guidence_card.png"
-                  alt="Find the right way to grow"
-                  className="home-guidance-img"
-                  draggable="false"
-                />
-              </div>
+          {/* LIVO Guidance Re-engagement Card (Shown ONLY when user skipped guidance via 'Later, Go to Home') */}
+          {showGuidanceCard && (
+            <section className="home-guidance-section">
+              <div className="home-guidance-card">
+                <div className="home-guidance-img-wrap">
+                  <img
+                    src="/assets/images/guidence_card.png"
+                    alt="Find the right way to grow"
+                    className="home-guidance-img"
+                    draggable="false"
+                  />
+                </div>
 
-              <div className="home-guidance-body">
-                <h3 className="home-guidance-title">
-                  {isMl ? 'മികച്ച കൃഷിരീതി കണ്ടെത്താം' : 'Find the right way to grow'}
-                </h3>
-                <p className="home-guidance-desc">
-                  {isMl
-                    ? 'മികച്ച വിളവെടുപ്പിനായി വ്യക്തിഗത വഴികാട്ടി നേടൂ.'
-                    : 'Get personalized guidance for a better season.'}
-                </p>
-                <button
-                  type="button"
-                  className="home-guidance-btn"
-                  onClick={handleViewAll}
-                >
-                  {isMl ? 'LIVO ഗൈഡൻസ് നേടാം' : 'Get LIVO Guidance'}
-                </button>
+                <div className="home-guidance-body">
+                  <h3 className="home-guidance-title">
+                    {isMl ? 'മികച്ച കൃഷിരീതി കണ്ടെത്താം' : 'Find the right way to grow'}
+                  </h3>
+                  <p className="home-guidance-desc">
+                    {isMl
+                      ? 'മികച്ച വിളവെടുപ്പിനായി വ്യക്തിഗത വഴികാട്ടി നേടൂ.'
+                      : 'Get personalized guidance for a better season.'}
+                  </p>
+                  <button
+                    type="button"
+                    className="home-guidance-btn"
+                    onClick={handleViewAll}
+                  >
+                    {isMl ? 'LIVO ഗൈഡൻസ് നേടാം' : 'Get LIVO Guidance'}
+                  </button>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* "Pick For You" Section Header */}
           <section className="home-pick-section">

@@ -33,6 +33,7 @@ export default function App() {
   const [rowTransition, setRowTransition] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [targetFeature, setTargetFeature] = useState('weather');
+  const [hasSkippedGuidance, setHasSkippedGuidance] = useState(false);
 
   const handleFeatureBackToRoadmap = () => {
     setRoadmapSource('home');
@@ -160,6 +161,7 @@ export default function App() {
   };
 
   const goToHomeFromOnboarding = () => {
+    setHasSkippedGuidance(true);
     if (transitionState) return;
     setTransitionState({ from: 'onboarding', to: 'home', direction: 'slide-left' });
     setTimeout(() => {
@@ -227,6 +229,11 @@ export default function App() {
     }, 400);
   };
 
+  const handleSkipGuidanceToHome = () => {
+    setHasSkippedGuidance(true);
+    goToHome();
+  };
+
   // Camera Scan Flow Handlers
   const goToCameraScan = () => {
     setCurrentScreen('camera-scan');
@@ -245,6 +252,7 @@ export default function App() {
   };
 
   const openFarmingPlanFromHome = () => {
+    setHasSkippedGuidance(false);
     setRoadmapSource('home');
     if (transitionState) return;
     setTransitionState({ from: 'home', to: 'roadmap', direction: 'slide-left' });
@@ -548,7 +556,7 @@ export default function App() {
               onStartScan={goToCameraScan}
               onOpenAiChat={() => setCurrentScreen('ai-chat')}
               onOpenAddField={handleOpenAddField}
-              onGoHome={goToHome}
+              onGoHome={handleSkipGuidanceToHome}
               onPlanReadyForHome={startSharedTransitionToHome}
               skipGeneration={roadmapSource === 'home'}
               hideCard1={sharedTransition !== null}
@@ -697,6 +705,7 @@ export default function App() {
               onViewAllPlan={openFarmingPlanFromHome}
               _activeFlow={activeFlow}
               language={language}
+              showGuidanceCard={hasSkippedGuidance}
             />
           </div>
         )}
