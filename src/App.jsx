@@ -35,6 +35,8 @@ export default function App() {
   const [targetFeature, setTargetFeature] = useState('weather');
   const [hasSkippedGuidance, setHasSkippedGuidance] = useState(false);
 
+  const [accountStep, setAccountStep] = useState(1);
+
   const handleFeatureBackToRoadmap = () => {
     setRoadmapSource('home');
     setCurrentScreen(roadmapSource === 'home' ? 'home' : 'roadmap');
@@ -124,11 +126,11 @@ export default function App() {
     }, 400);
   };
 
-  const goToSuccessFromAccount = () => {
+  const goToChallengesFromAccount = () => {
     if (transitionState) return;
-    setTransitionState({ from: 'account-creation', to: 'success', direction: 'slide-left' });
+    setTransitionState({ from: 'account-creation', to: 'challenges', direction: 'slide-left' });
     setTimeout(() => {
-      setCurrentScreen('success');
+      setCurrentScreen('challenges');
       setTransitionState(null);
     }, 400);
   };
@@ -170,11 +172,12 @@ export default function App() {
     }, 400);
   };
 
-  const goBackToOnboardingFromChallenges = () => {
+  const goBackToAccountFromChallenges = () => {
+    setAccountStep(4);
     if (transitionState) return;
-    setTransitionState({ from: 'challenges', to: 'onboarding', direction: 'slide-right' });
+    setTransitionState({ from: 'challenges', to: 'account-creation', direction: 'slide-right' });
     setTimeout(() => {
-      setCurrentScreen('onboarding');
+      setCurrentScreen('account-creation');
       setTransitionState(null);
     }, 400);
   };
@@ -350,8 +353,11 @@ export default function App() {
         )}
 
         {/* Animated Splash Screen */}
-        {currentScreen === 'splash' && (
-          <SplashScreen onComplete={goToLanguageFromSplash} />
+        {(currentScreen === 'splash' || transitionState?.from === 'splash') && (
+          <SplashScreen
+            onSkip={goToLanguageFromSplash}
+            isExiting={transitionState?.from === 'splash'}
+          />
         )}
 
         {/* Language Selection Screen */}
@@ -419,7 +425,9 @@ export default function App() {
             }`}
           >
             <AccountCreationScreen
-              onComplete={goToSuccessFromAccount}
+              key={`account-${accountStep}`}
+              initialStep={accountStep}
+              onComplete={goToChallengesFromAccount}
               onBackToIntro={goBackToLivoIntro}
               language={language}
             />
@@ -495,7 +503,7 @@ export default function App() {
             }`}
           >
             <ChallengesScreen
-              onBack={goBackToOnboardingFromChallenges}
+              onBack={goBackToAccountFromChallenges}
               onContinue={goToGoals}
               language={language}
             />

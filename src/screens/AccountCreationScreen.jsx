@@ -28,9 +28,9 @@ const ROLES = [
   },
 ];
 
-export default function AccountCreationScreen({ onComplete, onBackToIntro, language = 'en' }) {
+export default function AccountCreationScreen({ onComplete, onBackToIntro, language = 'en', initialStep = 1 }) {
   // Step 1: Phone, Step 2: Verify, Step 3: Name, Step 4: Who are you (Role)
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(initialStep);
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [selectedRole, setSelectedRole] = useState(null);
@@ -38,6 +38,8 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
   const [otpPhase, setOtpPhase] = useState('typing'); // 'typing' | 'merging' | 'merged'
   const [isInputFocused, setIsInputFocused] = useState(false);
   const videoRef = useRef(null);
+
+
 
   const isMl = language === 'ml';
   const cleanPhone = phone.replace(/\D/g, '');
@@ -48,7 +50,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
   const isKeyboardOpen = isInputFocused;
   const shouldShowFloatingCta = isKeyboardOpen
     ? (step === 1 && isPhoneValid) || (step === 3 && isNameValid)
-    : true;
+    : step !== 4 && step !== 5;
 
   useEffect(() => {
     if (videoRef.current) {
@@ -125,6 +127,15 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
 
   const handleSelectRole = (roleId) => {
     setSelectedRole(roleId);
+    if (onComplete) {
+      setTimeout(() => {
+        onComplete({
+          phone,
+          name: name.trim() || 'Farmer',
+          role: roleId,
+        });
+      }, 250);
+    }
   };
 
   const speechText = isMl
@@ -134,6 +145,8 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
       ? 'നന്ദി! ഇനി മുന്നോട്ട് പോകാം.'
       : step === 4
       ? 'ഇതിൽ നിങ്ങളെ പ്രതിനിധീകരിക്കുന്നത് ഏതാണ്?'
+      : step === 5
+      ? 'നിങ്ങളുടെ അക്കൗണ്ട് തയ്യാറായി!'
       : 'ആദ്യം ബന്ധപ്പെടാം.'
     : step === 1
     ? 'Enter your mobile number to get started.'
@@ -141,6 +154,8 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
     ? "Perfect! Let's keep going."
     : step === 4
     ? 'Which one best describes you?'
+    : step === 5
+    ? 'Your account is ready!'
     : "Let's get connected first.";
 
   const phoneTitleText = isMl ? 'നിങ്ങളുടെ നമ്പർ നൽകൂ' : 'Enter your number';
@@ -151,7 +166,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
   const ctaButtonText = isMl ? 'തുടരാം' : 'Continue';
 
   const handleHeaderBack = () => {
-    if (step > 1) {
+    if (step > 1 && step < 5) {
       setStep(step - 1);
     } else if (onBackToIntro) {
       onBackToIntro();
@@ -231,7 +246,7 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
                     handleNext();
                   }
                 }}
-                placeholder="Enter phone number"
+                placeholder={isMl ? 'ഫോൺ നമ്പർ നൽകുക' : 'Enter phone number'}
                 maxLength={10}
               />
             </div>
@@ -255,13 +270,10 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
               <div className={`account-otp-row ${otpPhase}`}>
                 {otpDigits.map((digit, idx) => {
                   const isDigitFilled = !!digit;
-                  const isNextToFill = !digit && (idx === 0 || !!otpDigits[idx - 1]);
                   return (
                     <div
                       key={idx}
-                      className={`account-otp-box ${isDigitFilled ? 'filled' : ''} ${
-                        isNextToFill ? 'active-target' : ''
-                      }`}
+                      className={`account-otp-box ${isDigitFilled ? 'filled' : ''}`}
                     >
                       {digit}
                     </div>
@@ -276,8 +288,8 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
                   height="28"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#ffffff"
-                  strokeWidth="3.5"
+                  stroke="#FFFFFF"
+                  strokeWidth="3.4"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
@@ -285,38 +297,32 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
                 </svg>
               </div>
             </div>
-
-            {otpPhase !== 'merged' && (
-              <p className="account-resend-text">
-                {isMl ? 'കോഡ് ലഭിച്ചില്ലേ? ' : "Didn't receive the code? "}
-                <span className="account-resend-link">{isMl ? 'വീണ്ടും അയക്കുക' : 'Resend'}</span>
-              </p>
-            )}
           </div>
         )}
 
         {step === 3 && (
           /* Sub-step 3: Tell us your name */
           <div className="account-step-content account-fade-in">
-            <h2 className="account-name-title">{nameTitleText}</h2>
-
-            <div className="account-name-input-wrapper">
-              <input
-                type="text"
-                className="account-name-input"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onFocus={() => setIsInputFocused(true)}
-                onBlur={() => setIsInputFocused(false)}
-                placeholder={namePlaceholderText}
-                autoFocus
-              />
-            </div>
+            <h2 className="account-field-title">{nameTitleText}</h2>
+            <input
+              type="text"
+              className="account-name-input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onFocus={() => setIsInputFocused(true)}
+              onBlur={() => setIsInputFocused(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && isNameValid) {
+                  handleNext();
+                }
+              }}
+              placeholder={namePlaceholderText}
+            />
           </div>
         )}
 
         {step === 4 && (
-          /* Sub-step 4: Who are you (Role selection) */
+          /* Sub-step 4: Choose your role */
           <div className="account-step-content account-fade-in">
             <h2 className="account-role-title">{roleTitleText}</h2>
 
@@ -343,6 +349,29 @@ export default function AccountCreationScreen({ onComplete, onBackToIntro, langu
                 );
               })}
             </div>
+          </div>
+        )}
+
+        {step === 5 && (
+          /* Sub-step 5: Inline Success State matching design mockup */
+          <div className="account-step-content account-fade-in account-success-step">
+            <div className="account-success-check-circle">
+              <svg
+                width="34"
+                height="34"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#FFFFFF"
+                strokeWidth="3.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <h2 className="account-success-title">
+              {isMl ? 'നിങ്ങളുടെ അക്കൗണ്ട് തയ്യാറായി!' : 'Your account is ready!'}
+            </h2>
           </div>
         )}
 
