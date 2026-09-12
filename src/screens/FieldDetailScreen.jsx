@@ -19,9 +19,33 @@ const DAYS = [
   { id: 6, day: '13', labelEn: 'Sun', labelMl: 'ഞായർ' },
 ];
 
+const NOTIFICATIONS = [
+  {
+    id: 1,
+    emoji: '🐞',
+    titleEn: 'Pest Alert',
+    titleMl: 'കീട മുന്നറിയിപ്പ്',
+    descEn: (fieldName, cropName) => `Bagrada Bug expected in field '${fieldName}' for crop '${cropName}'.`,
+    descMl: (fieldName, cropName) => `'${fieldName}' തോട്ടത്തിലെ '${cropName}' വിളയിൽ ബഗ്രഡ ബഗ് പ്രതീക്ഷിക്കുന്നു.`,
+    timeEn: '5 min ago',
+    timeMl: '5 മിനിറ്റ് മുമ്പ്',
+  },
+  {
+    id: 2,
+    emoji: '🐛',
+    titleEn: 'Pest Alert',
+    titleMl: 'കീട മുന്നറിയിപ്പ്',
+    descEn: (fieldName, cropName) => `Fall Armyworm expected in field '${fieldName}' for crop '${cropName}'.`,
+    descMl: (fieldName, cropName) => `'${fieldName}' തോട്ടത്തിലെ '${cropName}' വിളയിൽ ഫാൾ ആർമിവേം പ്രതീക്ഷിക്കുന്നു.`,
+    timeEn: '28 min ago',
+    timeMl: '28 മിനിറ്റ് മുമ്പ്',
+  },
+];
+
 export default function FieldDetailScreen({ fieldData, onBack, onSeeSprayDetails, language = 'en' }) {
   const [activeTab, setActiveTab] = useState('weather');
   const [activeDay, setActiveDay] = useState(1);
+  const [showNotifications, setShowNotifications] = useState(false);
   const sprayCardRef = useRef(null);
   const isMl = language === 'ml';
 
@@ -39,7 +63,6 @@ export default function FieldDetailScreen({ fieldData, onBack, onSeeSprayDetails
       : fieldData.crop.nameEn
     : 'Brinjal';
   const locationName = fieldData?.locationName || 'Kanjikode, Kerala';
-  const fieldArea = fieldData?.fieldArea || '0.58 acres';
 
   return (
     <div className="field-detail-screen">
@@ -65,6 +88,20 @@ export default function FieldDetailScreen({ fieldData, onBack, onSeeSprayDetails
             {locationName}
           </span>
         </div>
+        <button
+          type="button"
+          className="field-detail-bell-btn"
+          aria-label="Notifications"
+          onClick={() => setShowNotifications(true)}
+        >
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          {NOTIFICATIONS.length > 0 && (
+            <span className="field-detail-bell-badge">{NOTIFICATIONS.length}</span>
+          )}
+        </button>
         <button type="button" className="field-detail-menu-btn" aria-label="More">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffffff">
             <circle cx="12" cy="5" r="1.8" />
@@ -74,148 +111,50 @@ export default function FieldDetailScreen({ fieldData, onBack, onSeeSprayDetails
         </button>
       </header>
 
-      <div className="field-detail-scroll">
-        {/* Map Card */}
-        <div className="field-detail-card field-detail-map-card">
-          <div className="field-detail-map-img-wrap">
-            <img
-              src="/assets/images/add_field/map.png"
-              alt="Field Map"
-              className="field-detail-map-img"
-            />
-            <button type="button" className="field-detail-map-edit-btn" aria-label="Edit field">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#334155" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-              </svg>
-            </button>
-          </div>
-          <div className="field-detail-map-pill">
-            <span className="field-detail-crop-dot" />
-            <span className="field-detail-map-pill-text">{cropName}</span>
-            <span className="field-detail-map-pill-divider" />
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#334155" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-            </svg>
-            <span className="field-detail-map-pill-text">{fieldArea}</span>
-          </div>
-        </div>
-
-        {/* Today's Alerts */}
-        <div className="field-detail-card">
-          <div className="field-detail-alerts-head">
-            <div className="field-detail-alerts-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00796B" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              </svg>
-            </div>
-            <div className="field-detail-alerts-head-text">
-              <h2 className="field-detail-sec-title">
-                {isMl ? 'ഇന്നത്തെ മുന്നറിയിപ്പുകൾ' : "Today's Alerts"}
+      {showNotifications && (
+        <div
+          className="field-detail-notif-overlay"
+          onClick={() => setShowNotifications(false)}
+        >
+          <div className="field-detail-notif-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="field-detail-notif-head">
+              <h2 className="field-detail-notif-title">
+                {isMl ? 'അറിയിപ്പുകൾ' : 'Notifications'}
               </h2>
-              <span className="field-detail-alerts-sub">
-                {isMl ? 'ശ്രദ്ധിക്കേണ്ട സജീവ മുന്നറിയിപ്പുകൾ' : 'Active alerts need attention'}
-              </span>
+              <button
+                type="button"
+                className="field-detail-notif-close"
+                aria-label="Close"
+                onClick={() => setShowNotifications(false)}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
             </div>
-            <button type="button" className="field-detail-see-all">
-              {isMl ? 'എല്ലാം കാണുക' : 'See All'}
+
+            <div className="field-detail-notif-list">
+              {NOTIFICATIONS.map((n) => (
+                <div key={n.id} className="field-detail-notif-row">
+                  <span className="field-detail-notif-emoji">{n.emoji}</span>
+                  <div className="field-detail-notif-text">
+                    <strong>{isMl ? n.titleMl : n.titleEn}</strong>
+                    <p>{isMl ? n.descMl(fieldName, cropName) : n.descEn(fieldName, cropName)}</p>
+                    <span className="field-detail-notif-time">{isMl ? n.timeMl : n.timeEn}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button type="button" className="field-detail-notif-see-more">
+              {isMl ? 'കൂടുതൽ കാണുക' : 'See More'}
             </button>
           </div>
-
-          <div className="field-detail-alert-row">
-            <span className="field-detail-alert-emoji">🐞</span>
-            <div className="field-detail-alert-text">
-              <strong>{isMl ? 'കീട മുന്നറിയിപ്പ്' : 'Pest Alert'}</strong>
-              <p>
-                {isMl
-                  ? `'${fieldName}' തോട്ടത്തിലെ '${cropName}' വിളയിൽ ബഗ്രഡ ബഗ് പ്രതീക്ഷിക്കുന്നു.`
-                  : `Bagrada Bug expected in field '${fieldName}' for crop '${cropName}'.`}
-              </p>
-            </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </div>
-
-          <div className="field-detail-alert-row">
-            <span className="field-detail-alert-emoji">🐛</span>
-            <div className="field-detail-alert-text">
-              <strong>{isMl ? 'കീട മുന്നറിയിപ്പ്' : 'Pest Alert'}</strong>
-              <p>
-                {isMl
-                  ? `'${fieldName}' തോട്ടത്തിലെ '${cropName}' വിളയിൽ ഫാൾ ആർമിവേം പ്രതീക്ഷിക്കുന്നു.`
-                  : `Fall Armyworm expected in field '${fieldName}' for crop '${cropName}'.`}
-              </p>
-            </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </div>
         </div>
+      )}
 
-        {/* Growth Progress */}
-        <div className="field-detail-card">
-          <div className="field-detail-growth-head">
-            <h2 className="field-detail-sec-title">
-              {isMl ? 'വളർച്ച പുരോഗതി' : 'Growth Progress'}
-            </h2>
-            <span className="field-detail-growth-pct">44%</span>
-          </div>
-
-          <div className="field-detail-progress-track">
-            <div className="field-detail-progress-fill" style={{ width: '44%' }} />
-            <div className="field-detail-progress-thumb" style={{ left: '44%' }} />
-          </div>
-
-          <div className="field-detail-stage-box">
-            <div className="field-detail-stage-col">
-              <span className="field-detail-stage-label">
-                {isMl ? 'നിലവിലെ ഘട്ടം:' : 'Current Stage :'}
-              </span>
-              <span className="field-detail-stage-value">{isMl ? 'പൂവിടൽ' : 'Flowering'}</span>
-              <span className="field-detail-stage-date">31 Aug</span>
-            </div>
-            <div className="field-detail-stage-arrow">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
-              <span className="field-detail-stage-arrow-label">{isMl ? 'അടുത്തത്' : 'Next'}</span>
-            </div>
-            <div className="field-detail-stage-col right">
-              <span className="field-detail-stage-label">
-                {isMl ? 'അടുത്ത ഘട്ടം:' : 'Next Stage :'}
-              </span>
-              <span className="field-detail-stage-value">{isMl ? 'കായ്ക്കൽ' : 'Fruiting'}</span>
-              <span className="field-detail-stage-date">22 Sept</span>
-            </div>
-          </div>
-
-          <button type="button" className="field-detail-view-details">
-            {isMl ? 'വിശദാംശങ്ങൾ കാണുക' : 'View details'}
-          </button>
-        </div>
-
-        {/* Soil Report */}
-        <div className="field-detail-card">
-          <div className="field-detail-soil-head">
-            <div className="field-detail-soil-icon">🧪</div>
-            <div className="field-detail-alerts-head-text">
-              <h2 className="field-detail-sec-title">{isMl ? 'മണ്ണ് പരിശോധന' : 'Soil report'}</h2>
-              <span className="field-detail-alerts-sub">
-                {isMl
-                  ? 'മികച്ച ശുപാർശകൾക്കായി മണ്ണ് പരിശോധന റിപ്പോർട്ട് ചേർക്കുക'
-                  : 'Add your soil test report for better recommendations'}
-              </span>
-            </div>
-          </div>
-          <button type="button" className="field-detail-add-soil-btn">
-            <span className="field-detail-add-soil-plus">+</span>
-            {isMl ? 'മണ്ണ് റിപ്പോർട്ട് ചേർക്കുക' : 'Add Soil Report'}
-          </button>
-        </div>
-
+      <div className="field-detail-scroll">
         {/* Tabs: Weather / Fertilizer / Activity */}
         <div className="field-detail-tabs-row">
           <button
@@ -224,7 +163,7 @@ export default function FieldDetailScreen({ fieldData, onBack, onSeeSprayDetails
             onClick={() => setActiveTab('weather')}
           >
             <span>🌤️</span>
-            {isMl ? 'കാലാവസ്ഥ' : 'Weather'}
+            {isMl ? 'അപ്ഡേറ്റുകൾ' : 'Updates'}
           </button>
           <button
             type="button"
@@ -244,7 +183,28 @@ export default function FieldDetailScreen({ fieldData, onBack, onSeeSprayDetails
           </button>
         </div>
 
+        {activeTab === 'fertilizer' && (
+          <div className="field-detail-card">
+            <div className="field-detail-soil-head">
+              <div className="field-detail-soil-icon">🧪</div>
+              <div className="field-detail-alerts-head-text">
+                <h2 className="field-detail-sec-title">{isMl ? 'മണ്ണ് പരിശോധന' : 'Soil report'}</h2>
+                <span className="field-detail-alerts-sub">
+                  {isMl
+                    ? 'വളം ശുപാർശ ലഭിക്കാൻ നിങ്ങളുടെ മണ്ണ് പരിശോധന റിപ്പോർട്ട് ചേർക്കുക'
+                    : 'Add your soil test report to get fertilizer suggestions'}
+                </span>
+              </div>
+            </div>
+            <button type="button" className="field-detail-add-soil-btn">
+              <span className="field-detail-add-soil-plus">+</span>
+              {isMl ? 'മണ്ണ് റിപ്പോർട്ട് ചേർക്കുക' : 'Add Soil Report'}
+            </button>
+          </div>
+        )}
+
         {/* Weather Condition */}
+        {activeTab === 'weather' && (
         <div className="field-detail-card">
           <h2 className="field-detail-sec-title mb">
             {isMl ? 'കാലാവസ്ഥ അവസ്ഥ' : 'Weather condition'}
@@ -265,53 +225,43 @@ export default function FieldDetailScreen({ fieldData, onBack, onSeeSprayDetails
           </div>
 
           <div className="field-detail-weather-box">
-            <div className="field-detail-weather-top">
-              <div>
-                <div className="field-detail-avg-temp">
-                  {isMl ? 'ശരാശരി താപനില: 26.3°c' : 'Avg Temp: 26.3°c'}
-                </div>
-                <div className="field-detail-minmax">
-                  {isMl ? 'ഉയർന്നത് 33.2°c / താഴ്ന്നത് 22.3°c' : 'Max 33.2°c / Min 22.3°c'}
-                </div>
-              </div>
-              <div className="field-detail-current-temp-col">
-                <span className="field-detail-current-label">{isMl ? 'നിലവിൽ' : 'CURRENT'}</span>
-                <span className="field-detail-current-temp">29°c</span>
-              </div>
+            <div className="field-detail-weather-hero">
+              <span className="field-detail-weather-hero-emoji">☀️</span>
+              <span className="field-detail-weather-hero-temp">29°c</span>
+              <span className="field-detail-weather-hero-label">
+                {isMl ? 'തെളിഞ്ഞത്' : 'Sunny'}
+              </span>
             </div>
 
             <div className="field-detail-weather-stats">
               <div className="field-detail-weather-stat">
-                <span>💧</span>
+                <span className="field-detail-weather-stat-emoji">💧</span>
                 <strong>75%</strong>
                 <span className="field-detail-weather-stat-label">
                   {isMl ? 'ആർദ്രത' : 'Humidity'}
                 </span>
               </div>
               <div className="field-detail-weather-stat">
-                <span>🍃</span>
-                <strong>28.4 km/h</strong>
+                <span className="field-detail-weather-stat-emoji">🍃</span>
+                <strong>28 km/h</strong>
                 <span className="field-detail-weather-stat-label">
                   {isMl ? 'കാറ്റ്' : 'Wind'}
                 </span>
               </div>
               <div className="field-detail-weather-stat">
-                <span>❄️</span>
-                <strong>0.04 mm</strong>
+                <span className="field-detail-weather-stat-emoji">🌧️</span>
+                <strong>{isMl ? 'ഇല്ല' : 'None'}</strong>
                 <span className="field-detail-weather-stat-label">
-                  {isMl ? 'മഴ' : 'Rainfall'}
+                  {isMl ? 'മഴ' : 'Rain'}
                 </span>
               </div>
             </div>
-
-            <div className="field-detail-sunny-pill">
-              <span>☀️</span>
-              {isMl ? 'തെളിഞ്ഞത്' : 'Sunny'}
-            </div>
           </div>
         </div>
+        )}
 
         {/* Spraying Condition */}
+        {activeTab === 'weather' && (
         <div className="field-detail-card field-detail-spray-card" ref={sprayCardRef}>
           <div className="field-detail-spray-head">
             <h2 className="field-detail-sec-title">
@@ -373,6 +323,51 @@ export default function FieldDetailScreen({ fieldData, onBack, onSeeSprayDetails
             />
           </div>
         </div>
+        )}
+
+        {/* GDD - Growing Degree Days */}
+        {activeTab === 'weather' && (
+        <div className="field-detail-card">
+          <div className="field-detail-gdd-head">
+            <h2 className="field-detail-sec-title">
+              {isMl ? 'ജി.ഡി.ഡി (വളർച്ചാ ഡിഗ്രി ദിനങ്ങൾ)' : 'GDD (Growing Degree Days)'}
+            </h2>
+            <span className="field-detail-gdd-value">842</span>
+          </div>
+
+          <div className="field-detail-progress-track">
+            <div className="field-detail-progress-fill" style={{ width: '58%' }} />
+            <div className="field-detail-progress-thumb" style={{ left: '58%' }} />
+          </div>
+
+          <div className="field-detail-gdd-stats">
+            <div className="field-detail-gdd-stat">
+              <span className="field-detail-gdd-stat-label">
+                {isMl ? 'ഇന്നത്തെ ജി.ഡി.ഡി' : "Today's GDD"}
+              </span>
+              <span className="field-detail-gdd-stat-value">14.2</span>
+            </div>
+            <div className="field-detail-gdd-stat">
+              <span className="field-detail-gdd-stat-label">
+                {isMl ? 'ലക്ഷ്യം' : 'Target'}
+              </span>
+              <span className="field-detail-gdd-stat-value">1450</span>
+            </div>
+            <div className="field-detail-gdd-stat right">
+              <span className="field-detail-gdd-stat-label">
+                {isMl ? 'അടുത്ത ഘട്ടം വരെ' : 'Until next stage'}
+              </span>
+              <span className="field-detail-gdd-stat-value">~18 {isMl ? 'ദിവസം' : 'days'}</span>
+            </div>
+          </div>
+
+          <p className="field-detail-gdd-note">
+            {isMl
+              ? 'താപ ശേഖരണത്തിന്റെ അടിസ്ഥാനത്തിൽ വിളയുടെ വളർച്ചാ പുരോഗതി ട്രാക്ക് ചെയ്യുന്നു.'
+              : "Tracks crop growth progress based on accumulated heat units."}
+          </p>
+        </div>
+        )}
       </div>
     </div>
   );

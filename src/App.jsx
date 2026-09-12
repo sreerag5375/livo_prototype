@@ -725,6 +725,16 @@ export default function App() {
               onOpenAiChat={() => setCurrentScreen('ai-chat')}
               onOpenAddField={handleOpenAddField}
               onViewAllPlan={openFarmingPlanFromHome}
+              onViewFieldDetail={(field) => {
+                setFieldData({
+                  fieldName: field.nameEn,
+                  fieldNameMl: field.nameMl,
+                  crop: { nameEn: field.cropNameEn, nameMl: field.cropNameMl, image: field.image },
+                  locationName: 'Kanjikode, Kerala',
+                  fieldArea: '0.58 acres',
+                });
+                setCurrentScreen('field-detail');
+              }}
               _activeFlow={activeFlow}
               language={language}
               showGuidanceCard={hasSkippedGuidance}

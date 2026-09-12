@@ -10,6 +10,12 @@
   box-sizing: border-box;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #0f172a;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.field-detail-screen::-webkit-scrollbar {
+  display: none;
 }
 
 /* Header */
@@ -25,7 +31,8 @@
 }
 
 .field-detail-back-btn,
-.field-detail-menu-btn {
+.field-detail-menu-btn,
+.field-detail-bell-btn {
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -37,11 +44,31 @@
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
+  position: relative;
 }
 
 .field-detail-back-btn:active,
-.field-detail-menu-btn:active {
+.field-detail-menu-btn:active,
+.field-detail-bell-btn:active {
   transform: scale(0.9);
+}
+
+.field-detail-bell-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 9999px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 16px;
+  text-align: center;
+  border: 1.5px solid #00796B;
+  box-sizing: border-box;
 }
 
 .field-detail-header-info {
@@ -93,91 +120,35 @@
   margin-bottom: 12px;
 }
 
-/* Map card */
-.field-detail-map-card {
-  padding: 12px;
-}
-
-.field-detail-map-img-wrap {
-  position: relative;
-  border-radius: 14px;
-  overflow: hidden;
-  height: 150px;
-}
-
-.field-detail-map-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.field-detail-map-edit-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: #ffffff;
-  border: none;
+/* Tabs */
+.field-detail-tabs-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-}
-
-.field-detail-map-pill {
-  margin-top: -18px;
-  margin-inline: auto;
-  width: fit-content;
-  position: relative;
-  background: #ffffff;
-  border-radius: 9999px;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.field-detail-crop-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #7c3aed;
-  flex-shrink: 0;
-}
-
-.field-detail-map-pill-divider {
-  width: 1px;
-  height: 14px;
-  background: #e2e8f0;
-}
-
-/* Alerts */
-.field-detail-alerts-head {
-  display: flex;
-  align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
 }
 
-.field-detail-alerts-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: #e6f4f1;
+.field-detail-tab {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 12px;
+  padding: 12px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  gap: 6px;
+  cursor: pointer;
 }
 
+.field-detail-tab.active {
+  background: #00796B;
+  border-color: #00796B;
+  color: #ffffff;
+}
+
+/* Soil report (Fertilizer tab) */
 .field-detail-alerts-head-text {
   flex: 1;
   display: flex;
@@ -191,156 +162,6 @@
   font-weight: 500;
 }
 
-.field-detail-see-all {
-  background: none;
-  border: none;
-  color: #00796B;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  padding: 0;
-}
-
-.field-detail-alert-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-}
-
-.field-detail-alert-row:last-child {
-  margin-bottom: 0;
-}
-
-.field-detail-alert-emoji {
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.field-detail-alert-text {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.field-detail-alert-text strong {
-  font-size: 14px;
-  color: #1e293b;
-}
-
-.field-detail-alert-text p {
-  margin: 0;
-  font-size: 13px;
-  color: #64748b;
-  line-height: 1.4;
-}
-
-/* Growth progress */
-.field-detail-growth-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.field-detail-growth-pct {
-  font-size: 24px;
-  font-weight: 800;
-  color: #00796B;
-}
-
-.field-detail-progress-track {
-  position: relative;
-  height: 8px;
-  background: #e2e8f0;
-  border-radius: 9999px;
-  margin-bottom: 16px;
-}
-
-.field-detail-progress-fill {
-  height: 100%;
-  background: #22c55e;
-  border-radius: 9999px;
-}
-
-.field-detail-progress-thumb {
-  position: absolute;
-  top: 50%;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 3px solid #22c55e;
-  transform: translate(-50%, -50%);
-}
-
-.field-detail-stage-box {
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.field-detail-stage-col {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.field-detail-stage-col.right {
-  align-items: flex-end;
-  text-align: right;
-}
-
-.field-detail-stage-label {
-  font-size: 12px;
-  color: #64748b;
-  font-weight: 500;
-}
-
-.field-detail-stage-value {
-  font-size: 14.5px;
-  font-weight: 800;
-  color: #00796B;
-}
-
-.field-detail-stage-date {
-  font-size: 12px;
-  color: #94a3b8;
-}
-
-.field-detail-stage-arrow {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.field-detail-stage-arrow-label {
-  font-size: 11px;
-  color: #64748b;
-  font-weight: 600;
-}
-
-.field-detail-view-details {
-  width: 100%;
-  background: none;
-  border: none;
-  color: #00796B;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  padding: 4px 0 0 0;
-}
-
-/* Soil report */
 .field-detail-soil-head {
   display: flex;
   align-items: center;
@@ -381,34 +202,6 @@
   font-weight: 800;
 }
 
-/* Tabs */
-.field-detail-tabs-row {
-  display: flex;
-  gap: 10px;
-}
-
-.field-detail-tab {
-  flex: 1;
-  background: #ffffff;
-  border: 1px solid #eef2f6;
-  border-radius: 12px;
-  padding: 12px 8px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #475569;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-}
-
-.field-detail-tab.active {
-  background: #00796B;
-  border-color: #00796B;
-  color: #ffffff;
-}
-
 /* Weather condition */
 .field-detail-days-row {
   display: flex;
@@ -416,6 +209,12 @@
   overflow-x: auto;
   margin-bottom: 14px;
   padding-bottom: 2px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.field-detail-days-row::-webkit-scrollbar {
+  display: none;
 }
 
 .field-detail-day-pill {
@@ -457,79 +256,64 @@
 .field-detail-weather-box {
   background: #e6f4f1;
   border-radius: 14px;
-  padding: 16px;
+  padding: 18px 16px;
 }
 
-.field-detail-weather-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.field-detail-avg-temp {
-  font-size: 14.5px;
-  font-weight: 800;
-  color: #00796B;
-}
-
-.field-detail-minmax {
-  font-size: 12.5px;
-  color: #475569;
-  margin-top: 2px;
-}
-
-.field-detail-current-temp-col {
+.field-detail-weather-hero {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 20px;
 }
 
-.field-detail-current-label {
-  font-size: 10.5px;
-  color: #64748b;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+.field-detail-weather-hero-emoji {
+  font-size: 42px;
+  line-height: 1;
 }
 
-.field-detail-current-temp {
-  font-size: 26px;
+.field-detail-weather-hero-temp {
+  font-size: 40px;
   font-weight: 800;
   color: #00796B;
+  line-height: 1.1;
+}
+
+.field-detail-weather-hero-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 .field-detail-weather-stats {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 8px;
 }
 
 .field-detail-weather-stat {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  font-size: 14px;
+  gap: 4px;
+  font-size: 16px;
   font-weight: 800;
   color: #1e293b;
 }
 
-.field-detail-weather-stat-label {
-  font-size: 11.5px;
-  color: #64748b;
-  font-weight: 500;
+.field-detail-weather-stat-emoji {
+  font-size: 24px;
+  line-height: 1;
 }
 
-.field-detail-sunny-pill {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #1e293b;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.field-detail-weather-stat-label {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 600;
 }
 
 /* Spraying condition */
@@ -655,4 +439,216 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* Notification dropdown sheet */
+.field-detail-notif-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  z-index: 30;
+  display: flex;
+  justify-content: flex-end;
+  animation: field-detail-fade-in 0.18s ease;
+}
+
+@keyframes field-detail-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.field-detail-notif-sheet {
+  position: absolute;
+  top: 76px;
+  right: 12px;
+  left: 12px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.22);
+  max-height: 70%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: field-detail-slide-down 0.2s ease;
+}
+
+@keyframes field-detail-slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.field-detail-notif-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 10px 16px;
+  border-bottom: 1px solid #eef2f6;
+  flex-shrink: 0;
+}
+
+.field-detail-notif-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+.field-detail-notif-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.field-detail-notif-list {
+  overflow-y: auto;
+  padding: 8px 16px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.field-detail-notif-list::-webkit-scrollbar {
+  display: none;
+}
+
+.field-detail-notif-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.field-detail-notif-row:last-child {
+  border-bottom: none;
+}
+
+.field-detail-notif-emoji {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.field-detail-notif-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.field-detail-notif-text strong {
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.field-detail-notif-text p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.field-detail-notif-time {
+  font-size: 11.5px;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.field-detail-notif-see-more {
+  flex-shrink: 0;
+  margin: 8px 16px 16px 16px;
+  background: #00796B;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 11px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Progress track (shared by GDD) */
+.field-detail-progress-track {
+  position: relative;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  margin-bottom: 16px;
+}
+
+.field-detail-progress-fill {
+  height: 100%;
+  background: #22c55e;
+  border-radius: 9999px;
+}
+
+.field-detail-progress-thumb {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #22c55e;
+  transform: translate(-50%, -50%);
+}
+
+/* GDD - Growing Degree Days */
+.field-detail-gdd-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.field-detail-gdd-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #00796B;
+  flex-shrink: 0;
+}
+
+.field-detail-gdd-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.field-detail-gdd-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.field-detail-gdd-stat.right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.field-detail-gdd-stat-label {
+  font-size: 11.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.field-detail-gdd-stat-value {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.field-detail-gdd-note {
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
 }

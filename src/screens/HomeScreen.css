@@ -77,7 +77,7 @@
   margin-top: -26px;
   border-top-left-radius: 28px;
   border-top-right-radius: 28px;
-  background: #ffffff;
+  background: #f3f6f5;
   padding: 22px 0 20px 0;
   flex: 1;
   display: flex;
@@ -85,56 +85,241 @@
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
 }
 
-/* Quick Actions 4-Button Row */
-.home-actions-row {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  padding: 0 16px 24px 16px;
-  gap: 8px;
+/* Field Cards Section: horizontally scrollable, one card per field */
+.home-fields-section {
+  margin-bottom: 24px;
 }
 
-.home-action-btn {
-  background: transparent;
-  border: none;
+.home-fields-carousel {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 0 16px;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.home-fields-carousel::-webkit-scrollbar {
+  display: none;
+}
+.home-fields-carousel {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.home-field-card {
+  flex-shrink: 0;
+  width: 86%;
+  max-width: 340px;
+  scroll-snap-align: start;
+  background: #ffffff;
+  border: 1.5px solid #dce5e3;
+  border-radius: 20px;
+  padding: 0 12px 12px 12px;
+  overflow: hidden;
+}
+
+.home-field-card-img-wrap {
+  position: relative;
+  margin: 0 -12px 16px -12px;
+  height: 140px;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(135deg, #cdeee4, #e3f0f7);
+  border-bottom: 1px solid #dce5e3;
+}
+
+.home-field-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 14px 0;
+  display: block;
+  filter: drop-shadow(0 6px 10px rgba(15, 23, 42, 0.12));
+}
+
+.home-field-card-name-pill {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 12px;
+  padding: 6px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+}
+
+.home-field-card-name {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #0e5a56;
+  line-height: 1.2;
+}
+
+.home-field-card-crop {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Spray status — big visual banner, icon-led for easy recognition */
+.home-spray-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.home-spray-banner-icon {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.home-spray-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.home-spray-banner-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+}
+
+.home-spray-banner-reason {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.home-spray-banner.good {
+  background: #ecfdf3;
+}
+
+.home-spray-banner.good .home-spray-banner-title {
+  color: #16a34a;
+}
+
+.home-spray-banner.caution {
+  background: #fffbeb;
+}
+
+.home-spray-banner.caution .home-spray-banner-title {
+  color: #b45309;
+}
+
+.home-spray-banner.avoid {
+  background: #fef2f2;
+}
+
+.home-spray-banner.avoid .home-spray-banner-title {
+  color: #dc2626;
+}
+
+/* Visual fact tiles: icon + big value + short label */
+.home-facts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.home-fact-tile {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+  gap: 4px;
+  background: #f8fafc;
+  border: 1px solid #eef2f6;
+  border-radius: 14px;
+  padding: 14px 8px;
+  font: inherit;
+}
+
+.home-fact-tile-clickable {
   cursor: pointer;
-  padding: 0;
-  width: 72px;
-  transition: transform 0.15s ease;
 }
 
-.home-action-btn:active {
-  transform: scale(0.93);
+.home-fact-tile-icon {
+  font-size: 26px;
+  line-height: 1;
 }
 
-.home-action-icon-box {
-  width: 60px;
-  height: 60px;
-  border-radius: 20px;
-  background-color: #0a6460;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6px 16px rgba(10, 100, 96, 0.22);
-  margin-bottom: 8px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.home-fact-tile-value {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.25;
 }
 
-.home-action-btn:hover .home-action-icon-box {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(10, 100, 96, 0.3);
-}
-
-.home-action-label {
+.home-fact-tile-label {
   font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Color-code each tile by topic so they're distinguishable at a glance */
+.home-fact-tile.weather {
+  background: #eff6ff;
+  border-color: #dbeafe;
+}
+
+.home-fact-tile.weather .home-fact-tile-value {
+  color: #1d4ed8;
+}
+
+.home-fact-tile.soil {
+  background: #ecfeff;
+  border-color: #cffafe;
+}
+
+.home-fact-tile.soil .home-fact-tile-value {
+  color: #0e7490;
+}
+
+.home-fact-tile.growth {
+  background: #f0fdf4;
+  border-color: #dcfce7;
+}
+
+.home-fact-tile.growth .home-fact-tile-value {
+  color: #15803d;
+}
+
+.home-fact-tile.activities {
+  background: #fffbeb;
+  border-color: #fef3c7;
+}
+
+.home-fact-tile.activities .home-fact-tile-value {
+  color: #b45309;
+}
+
+.home-view-more-link {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 14px 0 0 0;
+  margin-top: 4px;
+  font-size: 14.5px;
   font-weight: 700;
   color: #0a6460;
   text-align: center;
-  line-height: 1.25;
-  letter-spacing: -0.1px;
+  cursor: pointer;
+}
+
+.home-view-more-link:active {
+  opacity: 0.7;
 }
 
 /* LIVO Guidance Re-engagement Card Section */
@@ -218,15 +403,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   padding: 0 20px 14px 20px;
 }
 
 .home-pick-title {
-  font-size: 21px;
+  font-size: 19px;
   font-weight: 700;
   color: #0e5a56;
   margin: 0;
   letter-spacing: -0.3px;
+  line-height: 1.25;
 }
 
 .home-view-all-btn {
