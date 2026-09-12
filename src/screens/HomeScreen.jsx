@@ -1,6 +1,69 @@
 import { useState, useRef, useEffect } from 'react';
 import './HomeScreen.css';
 
+const DEMO_FIELDS = [
+  {
+    id: 'hain',
+    nameEn: 'Hain',
+    nameMl: 'ഹെയ്ൻ',
+    cropNameEn: 'Brinjal',
+    cropNameMl: 'വഴുതന',
+    image: '/assets/images/add_field/crops/brinjal.png',
+    humidity: '75%',
+    tempC: '29°C',
+    weatherEn: 'Sunny',
+    weatherMl: 'തെളിഞ്ഞത്',
+    sprayStatus: 'avoid',
+    sprayLabelEn: 'Avoid Spraying Today',
+    sprayLabelMl: 'ഇന്ന് സ്‌പ്രേ ചെയ്യരുത്',
+    sprayReasonEn: 'Wind is too strong right now',
+    sprayReasonMl: 'ഇപ്പോൾ കാറ്റ് വളരെ ശക്തമാണ്',
+    growthStageEn: 'Flowering',
+    growthStageMl: 'പൂവിടൽ ഘട്ടം',
+    activitiesCount: 3,
+  },
+  {
+    id: 'north-field',
+    nameEn: 'North Field',
+    nameMl: 'വടക്കൻ തോട്ടം',
+    cropNameEn: 'Paddy',
+    cropNameMl: 'നെല്ല്',
+    image: '/assets/images/add_field/crops/paddy.png',
+    humidity: '68%',
+    tempC: '31°C',
+    weatherEn: 'Partly Cloudy',
+    weatherMl: 'ഭാഗിക മേഘാവൃതം',
+    sprayStatus: 'good',
+    sprayLabelEn: 'Safe To Spray Today',
+    sprayLabelMl: 'ഇന്ന് സ്‌പ്രേ ചെയ്യാം',
+    sprayReasonEn: 'Calm wind and clear sky',
+    sprayReasonMl: 'ശാന്തമായ കാറ്റും തെളിഞ്ഞ ആകാശവും',
+    growthStageEn: 'Tillering',
+    growthStageMl: 'നാമ്പിടൽ ഘട്ടം',
+    activitiesCount: 1,
+  },
+  {
+    id: 'riverside',
+    nameEn: 'Riverside Plot',
+    nameMl: 'നദീതീര പ്ലോട്ട്',
+    cropNameEn: 'Chilli',
+    cropNameMl: 'മുളക്',
+    image: '/assets/images/add_field/crops/chilly.png',
+    humidity: '80%',
+    tempC: '27°C',
+    weatherEn: 'Light Rain',
+    weatherMl: 'നേരിയ മഴ',
+    sprayStatus: 'caution',
+    sprayLabelEn: 'Spray With Care Today',
+    sprayLabelMl: 'ഇന്ന് ശ്രദ്ധിച്ച് സ്‌പ്രേ ചെയ്യുക',
+    sprayReasonEn: 'Light rain may reduce effect',
+    sprayReasonMl: 'നേരിയ മഴ ഫലപ്രാപ്തി കുറയ്ക്കാം',
+    growthStageEn: 'Fruiting',
+    growthStageMl: 'കായ്ക്കൽ ഘട്ടം',
+    activitiesCount: 2,
+  },
+];
+
 const PICK_FOR_YOU_CARDS = [
   {
     id: 1,
@@ -33,6 +96,7 @@ export default function HomeScreen({
   onOpenAiChat,
   onOpenAddField,
   onViewAllPlan,
+  onViewFieldDetail,
   isTransitioningFromPlan = false,
   hideCard1 = false,
   hideAllCards = false,
@@ -44,8 +108,10 @@ export default function HomeScreen({
   const isMl = language === 'ml';
   const [activeTab, setActiveTab] = useState('home');
   const [toastMessage, setToastMessage] = useState(null);
+  const [selectedFieldId, setSelectedFieldId] = useState(DEMO_FIELDS[0].id);
   const carouselRef = useRef(null);
   const cards = PICK_FOR_YOU_CARDS;
+  const selectedField = DEMO_FIELDS.find((f) => f.id === selectedFieldId) || DEMO_FIELDS[0];
 
   useEffect(() => {
     if (carouselRef.current) {
@@ -64,17 +130,6 @@ export default function HomeScreen({
     } else {
       showToast('Opening Farming Plan…');
     }
-  };
-
-  const handleQuickAction = (name) => {
-    if (name === 'Ask LIVO' && onOpenAiChat) {
-      onOpenAiChat();
-      return;
-    }
-    if (onActionClick) {
-      onActionClick(name);
-    }
-    showToast(`Opening ${name}...`);
   };
 
   const handleTalkToLivo = () => {
@@ -111,118 +166,6 @@ export default function HomeScreen({
 
         {/* Overlapping Curved White Sheet */}
         <div className="home-main-sheet">
-          {/* Quick Actions 4-Button Row */}
-          <section className="home-actions-row">
-            <button
-              type="button"
-              className="home-action-btn"
-              onClick={() => handleQuickAction('Plant Diagnosis')}
-            >
-              <div className="home-action-icon-box">
-                {/* Viewfinder + Seedling Icon */}
-                <svg
-                  width="26"
-                  height="26"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M4 8V5a1 1 0 0 1 1-1h3" />
-                  <path d="M16 4h3a1 1 0 0 1 1 1v3" />
-                  <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
-                  <path d="M8 20H5a1 1 0 0 1-1-1v-3" />
-                  <path d="M12 17v-4" />
-                  <path d="M9 13.5c0-1.8 3-2.5 3-4.5 0 2 3 2.7 3 4.5" />
-                </svg>
-              </div>
-              <span className="home-action-label">
-                Plant<br />Diagnosis
-              </span>
-            </button>
-
-            <button
-              type="button"
-              className="home-action-btn"
-              onClick={() => handleQuickAction('Crop Suggestion')}
-            >
-              <div className="home-action-icon-box">
-                {/* Two Leaves Sprout Icon */}
-                <svg
-                  width="26"
-                  height="26"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 21V10" />
-                  <path d="M12 10C9 6 4 7 4 12c4 1 7-1 8-2" />
-                  <path d="M12 10c3-4 8-3 8 2-4 1-7-1-8-2" />
-                </svg>
-              </div>
-              <span className="home-action-label">
-                Crop<br />Suggestion
-              </span>
-            </button>
-
-            <button
-              type="button"
-              className="home-action-btn"
-              onClick={() => handleQuickAction('Weather Alerts')}
-            >
-              <div className="home-action-icon-box">
-                {/* Bell Alert Icon */}
-                <svg
-                  width="26"
-                  height="26"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                </svg>
-              </div>
-              <span className="home-action-label">
-                Weather<br />Alerts
-              </span>
-            </button>
-
-            <button
-              type="button"
-              className="home-action-btn"
-              onClick={() => handleQuickAction('AI History')}
-            >
-              <div className="home-action-icon-box">
-                {/* Chat Bubble with Clock Icon */}
-                <svg
-                  width="26"
-                  height="26"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                  <polyline points="12 8 12 12 14.5 13.5" />
-                </svg>
-              </div>
-              <span className="home-action-label">
-                {isMl ? <>AI<br />ചരിത്രം</> : <>AI<br />History</>}
-              </span>
-            </button>
-          </section>
-
           {/* LIVO Guidance Re-engagement Card (Shown ONLY when user skipped guidance via 'Later, Go to Home') */}
           {showGuidanceCard && (
             <section className="home-guidance-section">
@@ -257,10 +200,14 @@ export default function HomeScreen({
             </section>
           )}
 
-          {/* "Pick For You" Section Header */}
+          {/* "Try This For Your Crop" Section Header */}
           <section className="home-pick-section">
             <div className="home-pick-header">
-              <h2 className="home-pick-title">Pick For You</h2>
+              <h2 className="home-pick-title">
+                {isMl
+                  ? `നിങ്ങളുടെ ${selectedField.cropNameMl} ന് ഇത് പരീക്ഷിക്കൂ`
+                  : `Try this for your ${selectedField.cropNameEn}`}
+              </h2>
               <button
                 type="button"
                 className="home-view-all-btn"
@@ -309,6 +256,106 @@ export default function HomeScreen({
                     <h3 className="home-pick-card-title">{card.title}</h3>
                   </div>
                 </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Field Cards: horizontally scrollable, one card per field */}
+          <section className="home-fields-section">
+            <div className="home-fields-carousel">
+              {DEMO_FIELDS.map((field) => (
+                <article key={field.id} className="home-field-card">
+                  <div className="home-field-card-img-wrap">
+                    <img
+                      src={field.image}
+                      alt={isMl ? field.cropNameMl : field.cropNameEn}
+                      className="home-field-card-img"
+                      draggable="false"
+                    />
+                    <div className="home-field-card-name-pill">
+                      <span className="home-field-card-name">
+                        {isMl ? field.nameMl : field.nameEn}
+                      </span>
+                      <span className="home-field-card-crop">
+                        {isMl ? field.cropNameMl : field.cropNameEn}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Spray status — big visual banner, icon-led */}
+                  <div className={`home-spray-banner ${field.sprayStatus}`}>
+                    <span className="home-spray-banner-icon">
+                      {field.sprayStatus === 'good' && '✅'}
+                      {field.sprayStatus === 'caution' && '⚠️'}
+                      {field.sprayStatus === 'avoid' && '🚫'}
+                    </span>
+                    <div className="home-spray-banner-text">
+                      <span className="home-spray-banner-title">
+                        {isMl ? field.sprayLabelMl : field.sprayLabelEn}
+                      </span>
+                      <span className="home-spray-banner-reason">
+                        {isMl ? field.sprayReasonMl : field.sprayReasonEn}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Visual fact tiles instead of text rows, color-coded per topic */}
+                  <div className="home-facts-grid">
+                    <div className="home-fact-tile weather">
+                      <span className="home-fact-tile-icon">
+                        {field.weatherEn === 'Sunny' && '☀️'}
+                        {field.weatherEn === 'Partly Cloudy' && '⛅'}
+                        {field.weatherEn === 'Light Rain' && '🌦️'}
+                      </span>
+                      <span className="home-fact-tile-value">{field.tempC}</span>
+                      <span className="home-fact-tile-label">
+                        {isMl ? field.weatherMl : field.weatherEn}
+                      </span>
+                    </div>
+
+                    <div className="home-fact-tile soil">
+                      <span className="home-fact-tile-icon">💧</span>
+                      <span className="home-fact-tile-value">{field.humidity}</span>
+                      <span className="home-fact-tile-label">
+                        {isMl ? 'മണ്ണിലെ ഈർപ്പം' : 'Soil Moisture'}
+                      </span>
+                    </div>
+
+                    <div className="home-fact-tile growth">
+                      <span className="home-fact-tile-icon">🌱</span>
+                      <span className="home-fact-tile-value">
+                        {isMl ? field.growthStageMl : field.growthStageEn}
+                      </span>
+                      <span className="home-fact-tile-label">
+                        {isMl ? 'വളർച്ചാ ഘട്ടം' : 'Growth Stage'}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="home-fact-tile activities home-fact-tile-clickable"
+                      onClick={() => {
+                        setSelectedFieldId(field.id);
+                        setActiveTab('activities');
+                        showToast('Activities schedule');
+                      }}
+                    >
+                      <span className="home-fact-tile-icon">📋</span>
+                      <span className="home-fact-tile-value">{field.activitiesCount}</span>
+                      <span className="home-fact-tile-label">
+                        {isMl ? 'ജോലികൾ' : 'Tasks'}
+                      </span>
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="home-view-more-link"
+                    onClick={() => onViewFieldDetail && onViewFieldDetail(field)}
+                  >
+                    {isMl ? `${field.nameMl} കൂടുതൽ കാണുക` : `View full details for ${field.nameEn}`}
+                  </button>
+                </article>
               ))}
             </div>
           </section>

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import MobileFrame from './components/MobileFrame';
-import FlowSelectScreen from './screens/FlowSelectScreen';
 import SplashScreen from './screens/SplashScreen';
 import LanguageScreen from './screens/LanguageScreen';
 import LivoIntroScreen from './screens/LivoIntroScreen';
@@ -20,12 +19,14 @@ import AddFieldScreen from './screens/AddFieldScreen';
 import MapPinpointScreen from './screens/MapPinpointScreen';
 import WeatherPlanningScreen from './screens/WeatherPlanningScreen';
 import SprayingConditionsScreen from './screens/SprayingConditionsScreen';
+import FieldDetailScreen from './screens/FieldDetailScreen';
+import FieldSuccessScreen from './screens/FieldSuccessScreen';
 import SharedCardTransition from './components/SharedCardTransition';
 import RowCardsTransition from './components/RowCardsTransition';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('flow-select');
-  const [activeFlow, setActiveFlow] = useState(1);
+  const [currentScreen, setCurrentScreen] = useState('splash');
+  const [activeFlow] = useState(2);
   const [language, setLanguage] = useState('en');
   const [transitionState, setTransitionState] = useState(null);
   const [roadmapSource, setRoadmapSource] = useState('goals');
@@ -54,7 +55,7 @@ export default function App() {
 
   const handleMapConfirm = (fullFieldData) => {
     setFieldData(fullFieldData);
-    setCurrentScreen(fullFieldData.targetFeature === 'weather' ? 'weather-planning' : 'spraying-conditions');
+    setCurrentScreen(fullFieldData.targetFeature === 'weather' ? 'weather-planning' : 'field-success');
   };
 
   const containerRef = useRef(null);
@@ -79,11 +80,6 @@ export default function App() {
 
     return () => clearTimeout(timer);
   }, [currentScreen]);
-
-  const selectFlowAndStart = (flowNum) => {
-    setActiveFlow(flowNum);
-    setCurrentScreen('splash');
-  };
 
   const goToLanguageFromSplash = () => {
     startSplashTransition();
@@ -347,11 +343,6 @@ export default function App() {
       overlayStatusBar={['onboarding', 'camera-scan', 'camera-confirm', 'ai-chat'].includes(currentScreen)}
     >
       <div className="app-screen-container" ref={containerRef}>
-        {/* Start Screen: Choose Onboarding Flow */}
-        {currentScreen === 'flow-select' && (
-          <FlowSelectScreen onSelectFlow={selectFlowAndStart} />
-        )}
-
         {/* Animated Splash Screen */}
         {(currentScreen === 'splash' || transitionState?.from === 'splash') && (
           <SplashScreen
@@ -665,7 +656,30 @@ export default function App() {
         {currentScreen === 'spraying-conditions' && (
           <div className="screen-layer">
             <SprayingConditionsScreen
+              onBack={() => setCurrentScreen('field-detail')}
+              language={language}
+            />
+          </div>
+        )}
+
+        {/* Field Creation Success Screen (spraying flow) */}
+        {currentScreen === 'field-success' && (
+          <div className="screen-layer">
+            <FieldSuccessScreen
+              fieldData={fieldData}
+              onComplete={() => setCurrentScreen('field-detail')}
+              language={language}
+            />
+          </div>
+        )}
+
+        {/* Field Detail Screen (shown after field creation for the spraying flow) */}
+        {currentScreen === 'field-detail' && (
+          <div className="screen-layer">
+            <FieldDetailScreen
+              fieldData={fieldData}
               onBack={handleFeatureBackToRoadmap}
+              onSeeSprayDetails={() => setCurrentScreen('spraying-conditions')}
               language={language}
             />
           </div>
@@ -711,6 +725,16 @@ export default function App() {
               onOpenAiChat={() => setCurrentScreen('ai-chat')}
               onOpenAddField={handleOpenAddField}
               onViewAllPlan={openFarmingPlanFromHome}
+              onViewFieldDetail={(field) => {
+                setFieldData({
+                  fieldName: field.nameEn,
+                  fieldNameMl: field.nameMl,
+                  crop: { nameEn: field.cropNameEn, nameMl: field.cropNameMl, image: field.image },
+                  locationName: 'Kanjikode, Kerala',
+                  fieldArea: '0.58 acres',
+                });
+                setCurrentScreen('field-detail');
+              }}
               _activeFlow={activeFlow}
               language={language}
               showGuidanceCard={hasSkippedGuidance}
