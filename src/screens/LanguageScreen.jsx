@@ -24,11 +24,13 @@ const LANGUAGES = [
   },
 ];
 
-export default function LanguageScreen({ onContinue }) {
+export default function LanguageScreen({ onContinue, onTestRoadmap }) {
   const [selectedLanguage, setSelectedLanguage] = useState(null);
 
+  // NORMAL FLOW — unchanged
   const handleSelect = (langId) => {
     setSelectedLanguage(langId);
+
     if (onContinue) {
       setTimeout(() => {
         onContinue(langId);
@@ -36,15 +38,38 @@ export default function LanguageScreen({ onContinue }) {
     }
   };
 
+  // DEBUG / TEST FLOW
+  // This does NOT affect the normal language selection flow.
+  const handleTestRoadmap = () => {
+    if (onTestRoadmap) {
+      onTestRoadmap();
+    }
+  };
+
   const isMl = selectedLanguage === 'ml';
-  const titleText = isMl ? 'നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കൂ' : 'Choose your language';
+
+  const titleText = isMl
+    ? 'നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കൂ'
+    : 'Choose your language';
+
   const subtitleText = isMl
     ? 'ആപ്പിലുടനീളം ഇതേ ഭാഷയായിരിക്കും ഉപയോഗിക്കുക.'
     : "We'll use it throughout the app.";
 
   return (
     <div className="language-screen">
+
+      {/* DEBUG / TEST BUTTON */}
+      <button
+        type="button"
+        className="language-test-button"
+        onClick={handleTestRoadmap}
+      >
+        Test → Farming Plan
+      </button>
+
       <div className="language-content">
+
         {/* Header Section */}
         <header className="language-header">
           <h1 className="language-title">{titleText}</h1>
@@ -65,16 +90,23 @@ export default function LanguageScreen({ onContinue }) {
         <div className="language-grid">
           {LANGUAGES.map((lang) => {
             const isSelected = selectedLanguage === lang.id;
+
             return (
               <button
                 key={lang.id}
                 type="button"
-                className={`language-card ${isSelected ? 'selected' : ''}`}
+                className={`language-card ${isSelected ? 'selected' : ''
+                  }`}
                 onClick={() => handleSelect(lang.id)}
               >
                 {/* Radio Indicator */}
-                <div className={`language-radio ${isSelected ? 'selected' : ''}`}>
-                  {isSelected && <div className="language-radio-inner" />}
+                <div
+                  className={`language-radio ${isSelected ? 'selected' : ''
+                    }`}
+                >
+                  {isSelected && (
+                    <div className="language-radio-inner" />
+                  )}
                 </div>
 
                 {/* Language Icon */}
@@ -86,11 +118,14 @@ export default function LanguageScreen({ onContinue }) {
                 />
 
                 {/* Language Label */}
-                <span className="language-label">{lang.label}</span>
+                <span className="language-label">
+                  {lang.label}
+                </span>
               </button>
             );
           })}
         </div>
+
       </div>
     </div>
   );

@@ -2,46 +2,124 @@ import { useState } from 'react';
 import './AddFieldScreen.css';
 
 const CROPS_LIST = [
-  { id: 'paddy', nameEn: 'Paddy', nameMl: 'നെല്ല്', image: '/assets/images/add_field/crops/paddy.png' },
-  { id: 'banana', nameEn: 'Banana', nameMl: 'വാഴ', image: '/assets/images/add_field/crops/banana.png' },
-  { id: 'sun_flower', nameEn: 'Sunflower', nameMl: 'സൂര്യകാന്തി', image: '/assets/images/add_field/crops/sun_flower.png' },
-  { id: 'chilly', nameEn: 'Chilli', nameMl: 'മുളക്', image: '/assets/images/add_field/crops/chilly.png' },
-  { id: 'ginger', nameEn: 'Ginger', nameMl: 'ഇഞ്ചി', image: '/assets/images/add_field/crops/ginger.png' },
-  { id: 'brinjal', nameEn: 'Brinjal', nameMl: 'വഴുതന', image: '/assets/images/add_field/crops/brinjal.png' },
+  {
+    id: 'banana',
+    nameEn: 'Banana',
+    nameMl: 'വാഴ',
+    image: '/assets/images/add_field/crops/banana.png',
+  },
+  {
+    id: 'sun_flower',
+    nameEn: 'Sunflower',
+    nameMl: 'സൂര്യകാന്തി',
+    image: '/assets/images/add_field/crops/sun_flower.png',
+  },
+  {
+    id: 'chilly',
+    nameEn: 'Chilli',
+    nameMl: 'മുളക്',
+    image: '/assets/images/add_field/crops/chilly.png',
+  },
+  {
+    id: 'ginger',
+    nameEn: 'Ginger',
+    nameMl: 'ഇഞ്ചി',
+    image: '/assets/images/add_field/crops/ginger.png',
+  },
+  {
+    id: 'brinjal',
+    nameEn: 'Brinjal',
+    nameMl: 'വഴുതന',
+    image: '/assets/images/add_field/crops/brinjal.png',
+  },
+  {
+    id: 'paddy',
+    nameEn: 'Paddy',
+    nameMl: 'നെല്ല്',
+    image: '/assets/images/add_field/crops/paddy.png',
+  },
 ];
 
-export default function AddFieldScreen({ onBack, onComplete, targetFeature = 'weather', language = 'en' }) {
-  const [fieldName, setFieldName] = useState('');
+export default function AddFieldScreen({
+  onBack,
+  onComplete,
+  targetFeature = 'weather',
+  language = 'en',
+}) {
   const [selectedCrop, setSelectedCrop] = useState(null);
-  const [showCropSheet, setShowCropSheet] = useState(false);
+  const [fieldName, setFieldName] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isEditingFieldName, setIsEditingFieldName] = useState(false);
 
   const isMl = language === 'ml';
-  const isValid = fieldName.trim().length > 0 && selectedCrop !== null;
+
+  const filteredCrops = CROPS_LIST.filter((crop) => {
+    const query = searchQuery.trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    return (
+      crop.nameEn.toLowerCase().includes(query) ||
+      crop.nameMl.toLowerCase().includes(query)
+    );
+  });
+
+  const isValid =
+    selectedCrop !== null &&
+    fieldName.trim().length > 0;
 
   const handleSelectCrop = (crop) => {
     setSelectedCrop(crop);
-    setShowCropSheet(false);
 
-    // Autofill field name with crop name + Field (e.g. "Paddy Field")
-    const defaultAutoName = isMl ? `${crop.nameMl} തോട്ടം` : `${crop.nameEn} Field`;
-    setFieldName(defaultAutoName);
+    const defaultFieldName = isMl
+      ? `${crop.nameMl} തോട്ടം`
+      : `${crop.nameEn} Field`;
+
+    setFieldName(defaultFieldName);
+
+    // Start in non-editing mode.
+    setIsEditingFieldName(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isValid && onComplete) {
-      onComplete({
-        fieldName: fieldName.trim(),
-        crop: selectedCrop,
-        targetFeature,
-      });
+  const handleEditFieldName = () => {
+    setIsEditingFieldName(true);
+
+    // Focus input after it becomes editable.
+    setTimeout(() => {
+      const input = document.querySelector(
+        '.add-field-name-input'
+      );
+
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 0);
+  };
+
+  const handleSubmit = () => {
+    if (!isValid || !onComplete) {
+      return;
     }
+
+    onComplete({
+      fieldName: fieldName.trim(),
+      crop: selectedCrop,
+      targetFeature,
+    });
   };
 
   return (
     <div className="add-field-screen">
-      {/* Top Header Bar with Back Arrow */}
+
+      {/* =====================================================
+          HEADER
+          ===================================================== */}
+
       <header className="add-field-header">
+
         <button
           type="button"
           className="add-field-back-btn"
@@ -49,11 +127,11 @@ export default function AddFieldScreen({ onBack, onComplete, targetFeature = 'we
           aria-label="Back"
         >
           <svg
-            width="22"
-            height="22"
+            width="28"
+            height="28"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#00796B"
+            stroke="#00847C"
             strokeWidth="2.8"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -61,139 +139,267 @@ export default function AddFieldScreen({ onBack, onComplete, targetFeature = 'we
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
+
+        <h1 className="add-field-title">
+          {isMl
+            ? 'നിങ്ങൾ എന്താണ് കൃഷി ചെയ്യുന്നത്?'
+            : 'What are you growing?'}
+        </h1>
+
       </header>
 
-      {/* Top Hero Banner with Speech Bubble */}
-      <div className="add-field-hero-wrap">
-        <img
-          src="/assets/images/add_field/add_field_top_image.png"
-          alt="Livo Farmer in Field"
-          className="add-field-hero-img"
-        />
 
-        {/* Speech Bubble Overlay */}
-        <div className="add-field-speech-bubble">
-          <p className="add-field-speech-text">
-            {isMl
-              ? 'നിങ്ങളുടെ തോട്ടത്തെക്കുറിച്ച് എനിക്കറിയണം. 🌱'
-              : "I'd love to know about your field. 🌱"}
-          </p>
-          <div className="add-field-speech-arrow" />
-        </div>
-      </div>
+      {/* =====================================================
+          MAIN CONTENT
+          ===================================================== */}
 
-      {/* Form Area */}
-      <form className="add-field-form" onSubmit={handleSubmit}>
-        {/* 1st Field: Crop Select Input Dropdown */}
-        <div className="add-field-form-group">
-          <label className="add-field-label">
-            {isMl ? 'നിങ്ങൾ എന്താണ് കൃഷി ചെയ്യുന്നത്?' : 'What are you growing'}
-          </label>
-          <button
-            type="button"
-            className={`add-field-select-btn ${selectedCrop ? 'selected' : ''}`}
-            onClick={() => setShowCropSheet(true)}
+      <main className="add-field-content">
+
+        {/* =====================================================
+            SEARCH
+            ===================================================== */}
+
+        <div className="add-field-search">
+
+          <svg
+            className="add-field-search-icon"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#9CA5B2"
+            strokeWidth="2.3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            {selectedCrop ? (
-              <div className="add-field-selected-crop-val">
-                <img
-                  src={selectedCrop.image}
-                  alt={selectedCrop.nameEn}
-                  className="add-field-selected-icon"
-                />
-                <span>{isMl ? selectedCrop.nameMl : selectedCrop.nameEn}</span>
-              </div>
-            ) : (
-              <span className="add-field-placeholder">
-                {isMl ? 'വിള തിരഞ്ഞെടുക്കുക' : 'Select the crop'}
-              </span>
-            )}
+            <circle
+              cx="11"
+              cy="11"
+              r="7"
+            />
 
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#64748b"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="add-field-dropdown-icon"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-        </div>
+            <line
+              x1="16.5"
+              y1="16.5"
+              x2="21"
+              y2="21"
+            />
+          </svg>
 
-        {/* 2nd Field: Field Name Input (Autofilled on Crop select) */}
-        <div className="add-field-form-group">
-          <label className="add-field-label">
-            {isMl ? 'തോട്ടത്തിന്റെ പേര് എന്താണ്?' : 'What do you call this field'}
-          </label>
           <input
             type="text"
-            className="add-field-input"
-            value={fieldName}
-            onChange={(e) => setFieldName(e.target.value)}
-            placeholder={isMl ? 'നിങ്ങളുടെ തോട്ടത്തിന്റെ പേര്' : 'Your field name'}
+            className="add-field-search-input"
+            value={searchQuery}
+            onChange={(e) =>
+              setSearchQuery(e.target.value)
+            }
+            placeholder={
+              isMl
+                ? 'വിള തിരയുക...'
+                : 'Search crop...'
+            }
           />
+
+          {searchQuery && (
+            <button
+              type="button"
+              className="add-field-search-clear"
+              onClick={() => setSearchQuery('')}
+              aria-label="Clear search"
+            >
+              ×
+            </button>
+          )}
+
         </div>
 
-        {/* Continue CTA Button */}
-        <div className="add-field-cta-wrap">
-          <button
-            type="submit"
-            className="add-field-continue-btn"
-            disabled={!isValid}
-          >
-            {isMl ? 'തുടരാം' : 'Continue'}
-          </button>
-        </div>
-      </form>
 
-      {/* Select Crop Bottom Sheet Modal */}
-      {showCropSheet && (
-        <div className="add-field-sheet-backdrop" onClick={() => setShowCropSheet(false)}>
-          <div
-            className="add-field-sheet-container"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Sheet Handle */}
-            <div className="add-field-sheet-handle" />
+        {/* =====================================================
+            CROP GRID
+            ===================================================== */}
 
-            <h2 className="add-field-sheet-title">
-              {isMl ? 'വിള തിരഞ്ഞെടുക്കുക' : 'Select Your Crop'}
-            </h2>
+        <div className="add-field-crops-grid">
 
-            {/* Crops Grid */}
-            <div className="add-field-crops-grid">
-              {CROPS_LIST.map((crop) => {
-                const isSelected = selectedCrop?.id === crop.id;
-                return (
-                  <button
-                    key={crop.id}
-                    type="button"
-                    className={`add-field-crop-item ${isSelected ? 'selected' : ''}`}
-                    onClick={() => handleSelectCrop(crop)}
-                  >
-                    <div className="add-field-crop-circle">
-                      <img
-                        src={crop.image}
-                        alt={crop.nameEn}
-                        className="add-field-crop-img"
-                        draggable="false"
-                      />
-                    </div>
-                    <span className="add-field-crop-name">
-                      {isMl ? crop.nameMl : crop.nameEn}
+          {filteredCrops.map((crop) => {
+
+            const isSelected =
+              selectedCrop?.id === crop.id;
+
+            return (
+              <button
+                key={crop.id}
+                type="button"
+                className={`add-field-crop-item ${isSelected ? 'selected' : ''
+                  }`}
+                onClick={() =>
+                  handleSelectCrop(crop)
+                }
+              >
+
+                <div className="add-field-crop-circle">
+
+                  <img
+                    src={crop.image}
+                    alt={
+                      isMl
+                        ? crop.nameMl
+                        : crop.nameEn
+                    }
+                    className="add-field-crop-img"
+                    draggable="false"
+                  />
+
+                  {isSelected && (
+                    <span className="add-field-crop-check">
+
+                      <svg
+                        width="19"
+                        height="19"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#ffffff"
+                        strokeWidth="3.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="5 12 10 17 19 7" />
+                      </svg>
+
                     </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+                  )}
+
+                </div>
+
+                <span className="add-field-crop-name">
+                  {isMl
+                    ? crop.nameMl
+                    : crop.nameEn}
+                </span>
+
+              </button>
+            );
+          })}
+
         </div>
-      )}
+
+
+        {/* =====================================================
+            NO SEARCH RESULTS
+            ===================================================== */}
+
+        {filteredCrops.length === 0 && (
+          <div className="add-field-no-results">
+            {isMl
+              ? 'വിള കണ്ടെത്താനായില്ല'
+              : 'No crops found'}
+          </div>
+        )}
+
+
+        {/* =====================================================
+            FIELD NAME
+            ===================================================== */}
+
+        {selectedCrop && (
+
+          <section className="add-field-name-section">
+
+            <label className="add-field-name-label">
+              {isMl
+                ? 'ഫീൽഡിന് ഒരു പേര് നൽകൂ'
+                : 'Give your field a name'}
+            </label>
+
+            <div
+              className={`add-field-name-box ${isEditingFieldName
+                  ? 'is-editing'
+                  : ''
+                }`}
+            >
+
+              {/* Crop Icon */}
+
+              <img
+                src={selectedCrop.image}
+                alt=""
+                className="add-field-name-crop-img"
+                draggable="false"
+              />
+
+
+              {/* Field Name */}
+
+              <input
+                type="text"
+                className="add-field-name-input"
+                value={fieldName}
+                onChange={(e) =>
+                  setFieldName(e.target.value)
+                }
+                readOnly={!isEditingFieldName}
+                aria-label={
+                  isMl
+                    ? 'ഫീൽഡ് പേര്'
+                    : 'Field name'
+                }
+              />
+
+
+              {/* Edit Icon */}
+
+              <button
+                type="button"
+                className="add-field-name-edit-btn"
+                onClick={handleEditFieldName}
+                aria-label={
+                  isMl
+                    ? 'ഫീൽഡ് പേര് തിരുത്തുക'
+                    : 'Edit field name'
+                }
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                </svg>
+              </button>
+
+            </div>
+
+          </section>
+
+        )}
+
+      </main>
+
+
+      {/* =====================================================
+          CONTINUE
+          ===================================================== */}
+
+      <footer className="add-field-cta-wrap">
+
+        <button
+          type="button"
+          className="add-field-continue-btn"
+          disabled={!isValid}
+          onClick={handleSubmit}
+        >
+          {isMl
+            ? 'തുടരാം'
+            : 'Continue'}
+        </button>
+
+      </footer>
+
     </div>
   );
 }
