@@ -46,9 +46,7 @@ export default function FieldSetupDoneScreen({
                         </>
                     ) : (
                         <>
-                            Paddy Field Setup
-                            <br />
-                            Done
+                            Paddy Field Overview.
                         </>
                     )}
                 </h1>
