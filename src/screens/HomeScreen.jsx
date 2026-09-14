@@ -154,13 +154,18 @@ export default function HomeScreen({
               draggable="false"
             />
 
-            {/* Clickable Hotspot over "Talk to LIVO" Button in Banner */}
+            {/* Visible, labeled primary action — replaces the old invisible hotspot,
+                which was undiscoverable for first-time / 50+ users */}
             <button
               type="button"
-              className="home-hero-talk-btn"
+              className="home-hero-talk-visible-btn"
               onClick={handleTalkToLivo}
-              aria-label="Talk to LIVO"
-            />
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF">
+                <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2zm7 13l1.2 2.8L23 19l-2.8 1.2L19 23l-1.2-2.8L15 19l2.8-1.2L19 15z" />
+              </svg>
+              <span>{isMl ? 'LIVO യോട് സംസാരിക്കൂ' : 'Talk to LIVO'}</span>
+            </button>
           </div>
         </section>
 
@@ -200,68 +205,18 @@ export default function HomeScreen({
             </section>
           )}
 
-          {/* "Try This For Your Crop" Section Header */}
-          <section className="home-pick-section">
-            <div className="home-pick-header">
-              <h2 className="home-pick-title">
-                {isMl
-                  ? `നിങ്ങളുടെ ${selectedField.cropNameMl} ന് ഇത് പരീക്ഷിക്കൂ`
-                  : `Try this for your ${selectedField.cropNameEn}`}
-              </h2>
-              <button
-                type="button"
-                className="home-view-all-btn"
-                onClick={handleViewAll}
-              >
-                View All
-              </button>
-            </div>
-
-            {/* Carousel Cards */}
-            <div className="home-cards-carousel" ref={carouselRef}>
-              {cards.map((card, idx) => (
-                <div
-                  key={card.id}
-                  ref={idx === 0 ? firstCardRef : null}
-                  id={`home-pick-card-${idx}`}
-                  className={`home-pick-card ${
-                    isTransitioningFromPlan && idx > 0 ? 'fade-in-delayed' : ''
-                  }`}
-                  style={
-                    hideAllCards || (idx === 0 && hideCard1)
-                      ? { visibility: 'hidden' }
-                      : undefined
-                  }
-                  onClick={() => {
-                    if (idx === 0 && onActionClick) {
-                      onActionClick('health-check');
-                    } else if (idx === 1 && onOpenAiChat) {
-                      onOpenAiChat();
-                    } else if (idx === 2 && onOpenAddField) {
-                      onOpenAddField('weather');
-                    } else if (idx === 3 && onOpenAddField) {
-                      onOpenAddField('spray');
-                    } else {
-                      handleViewAll();
-                    }
-                  }}
-                >
-                  <img
-                    src={card.image}
-                    alt={card.title}
-                    className="home-pick-card-img"
-                    draggable="false"
-                  />
-                  <div className="home-pick-card-overlay">
-                    <h3 className="home-pick-card-title">{card.title}</h3>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* Field Cards: horizontally scrollable, one card per field */}
           <section className="home-fields-section">
+            <div className="home-fields-header">
+              <h2 className="home-fields-title">
+                {isMl ? 'നിങ്ങളുടെ തോട്ടങ്ങൾ' : 'Your Fields'}
+              </h2>
+              {DEMO_FIELDS.length > 1 && (
+                <span className="home-fields-hint">
+                  {isMl ? 'കൂടുതൽ കാണാൻ സൈഡിലേക്ക് സ്വൈപ്പ് ചെയ്യുക' : 'Swipe to see more'}
+                </span>
+              )}
+            </div>
             <div className="home-fields-carousel">
               {DEMO_FIELDS.map((field) => (
                 <article key={field.id} className="home-field-card">
@@ -356,6 +311,66 @@ export default function HomeScreen({
                     {isMl ? `${field.nameMl} കൂടുതൽ കാണുക` : `View full details for ${field.nameEn}`}
                   </button>
                 </article>
+              ))}
+            </div>
+          </section>
+
+          {/* "Try This For Your Crop" — secondary, browsable suggestions */}
+          <section className="home-pick-section">
+            <div className="home-pick-header">
+              <h2 className="home-pick-title">
+                {isMl
+                  ? `നിങ്ങളുടെ ${selectedField.cropNameMl} ന് ഇത് പരീക്ഷിക്കൂ`
+                  : `Try this for your ${selectedField.cropNameEn}`}
+              </h2>
+              <button
+                type="button"
+                className="home-view-all-btn"
+                onClick={handleViewAll}
+              >
+                View All
+              </button>
+            </div>
+
+            {/* Carousel Cards */}
+            <div className="home-cards-carousel" ref={carouselRef}>
+              {cards.map((card, idx) => (
+                <div
+                  key={card.id}
+                  ref={idx === 0 ? firstCardRef : null}
+                  id={`home-pick-card-${idx}`}
+                  className={`home-pick-card ${
+                    isTransitioningFromPlan && idx > 0 ? 'fade-in-delayed' : ''
+                  }`}
+                  style={
+                    hideAllCards || (idx === 0 && hideCard1)
+                      ? { visibility: 'hidden' }
+                      : undefined
+                  }
+                  onClick={() => {
+                    if (idx === 0 && onActionClick) {
+                      onActionClick('health-check');
+                    } else if (idx === 1 && onOpenAiChat) {
+                      onOpenAiChat();
+                    } else if (idx === 2 && onOpenAddField) {
+                      onOpenAddField('weather');
+                    } else if (idx === 3 && onOpenAddField) {
+                      onOpenAddField('spray');
+                    } else {
+                      handleViewAll();
+                    }
+                  }}
+                >
+                  <img
+                    src={card.image}
+                    alt={card.title}
+                    className="home-pick-card-img"
+                    draggable="false"
+                  />
+                  <div className="home-pick-card-overlay">
+                    <h3 className="home-pick-card-title">{card.title}</h3>
+                  </div>
+                </div>
               ))}
             </div>
           </section>

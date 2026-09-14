@@ -51,23 +51,33 @@
   display: block;
 }
 
-/* Hotspot for "Talk to LIVO" button inside the banner */
-.home-hero-talk-btn {
+/* Visible, labeled version of the same action — the invisible hotspot alone
+   was not discoverable; recognition over recall for first-time / 50+ users */
+.home-hero-talk-visible-btn {
   position: absolute;
-  left: 45%;
-  top: 68%;
-  width: 32%;
-  height: 16%;
-  border-radius: 999px;
-  background: transparent;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #0a6460;
+  color: #ffffff;
   border: none;
+  border-radius: 999px;
+  padding: 12px 22px;
+  min-height: 48px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+  box-shadow: 0 8px 20px rgba(10, 100, 96, 0.35);
   cursor: pointer;
-  z-index: 5;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.home-hero-talk-btn:active {
-  transform: scale(0.94);
+.home-hero-talk-visible-btn:active {
+  transform: translateX(-50%) scale(0.96);
 }
 
 /* Overlapping Curved White Sheet */
@@ -88,6 +98,30 @@
 /* Field Cards Section: horizontally scrollable, one card per field */
 .home-fields-section {
   margin-bottom: 24px;
+}
+
+.home-fields-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 0 20px 14px 20px;
+}
+
+.home-fields-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #0e5a56;
+  margin: 0;
+  letter-spacing: -0.3px;
+  line-height: 1.25;
+}
+
+.home-fields-hint {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  white-space: nowrap;
 }
 
 .home-fields-carousel {
@@ -242,6 +276,7 @@
   border: 1px solid #eef2f6;
   border-radius: 14px;
   padding: 14px 8px;
+  min-height: 48px;
   font: inherit;
 }
 
@@ -305,8 +340,11 @@
 }
 
 .home-view-more-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
+  min-height: 48px;
   background: none;
   border: none;
   padding: 14px 0 0 0;
@@ -542,6 +580,8 @@
   cursor: pointer;
   color: #94a3b8;
   padding: 6px 12px;
+  min-width: 48px;
+  min-height: 48px;
   transition: color 0.15s ease;
 }
 
