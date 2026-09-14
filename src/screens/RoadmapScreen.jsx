@@ -39,7 +39,7 @@ export default function RoadmapScreen({
     {
       id: 3,
       stepBadge: isMl ? 'ഘട്ടം 3 / 3' : 'STEP 3 OF 3',
-      shortLabel: isMl ? 'ഫീൽഡ് ചേർക്കുക' : 'Add Field',
+      shortLabel: isMl ? 'ഫീൽഡ് ചേർക്കുക' : 'Know Your Field Insights',
       image: '/assets/images/onboarding/roadmap/8.png',
       title: isMl ? 'നിങ്ങളുടെ ഫീൽഡ് ചേർക്കുക' : 'Add Your Field',
       cta: isMl ? 'ഫീൽഡ് ചേർക്കാം →' : 'Add Field →',
